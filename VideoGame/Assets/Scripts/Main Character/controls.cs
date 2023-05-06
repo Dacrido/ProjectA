@@ -6,7 +6,10 @@ public class controls : MonoBehaviour
 {
     //movement
     private float horizontal; 
-    private float moveSpeed = 5.5f;
+    private float currentSpeed; 
+    private float acceleration;
+    private float maxSpeed = 5.5f;
+
     private float jumpForce = 6.6f;
     private bool isFacingRight = true;
     private bool canDoubleJump = true;
@@ -23,7 +26,7 @@ public class controls : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        currentSpeed = 0f;
     }
 
     // Update is called once per frame
@@ -60,8 +63,26 @@ public class controls : MonoBehaviour
 
     void FixedUpdate()
     {
-        // movement left/right
-        rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
+        //movement speed formula for smoother gameplay
+
+        // TESTING PURPOSES
+        /*
+        if (horizontal == 0 && currentSpeed > 0){
+            while (currentSpeed > 0) currentSpeed -= 0.1f;
+        }
+
+        else if (horizontal != 0&& currentSpeed < maxSpeed){
+            currentSpeed += 1f;
+        }*/    
+        //rb.velocity = new Vector2((horizontal) * currentSpeed, rb.velocity.y);
+        
+        
+        rb.velocity = new Vector2((horizontal) * maxSpeed, rb.velocity.y);
+
+        
+
+        
+
     }
 
     private void Flip() // flipping the player sprite if they are moving in the opposite direction
