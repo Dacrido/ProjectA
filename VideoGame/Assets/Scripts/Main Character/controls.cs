@@ -4,16 +4,28 @@ using UnityEngine;
 
 public class controls : MonoBehaviour
 {
+
+    [SerializeField] private Animator anim;
+
+
+
     //movement
     private float horizontal; 
     private float currentSpeed; 
     private float acceleration;
     private float maxSpeed = 5.5f;
 
+    //jump
     private float jumpForce = 6.6f;
     private bool isFacingRight = true;
     private bool canDoubleJump = true;
+    //improving jump
+    private float cayoteTime = 0.15f;
+    private float cayoteTimeCounter;
+    private float jumpBufferTime = 0.15f;
+    private float jumpBufferCounter;
 
+    
 
 
     //player physics and structure
@@ -35,26 +47,50 @@ public class controls : MonoBehaviour
         //check if left/right input is pressed
         horizontal = Input.GetAxisRaw("Horizontal");//horizontal input updated every frame
         
+
+        // player can jump after a short amount of time after they have left the platform
+        if (IsGround())
+        {
+            cayoteTimeCounter = cayoteTime;
+        } else
+        {
+            cayoteTimeCounter -= Time.deltaTime;
+        }
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            jumpBufferCounter = jumpBufferTime; 
+
+        } else
+        {
+            jumpBufferCounter -= Time.deltaTime; 
+
+        }
+
         //JUMP
-        if (Input.GetButtonDown("Jump") && IsGround()) // if jump is pressed and the player is on the platform
+        if (jumpBufferCounter > 0f && cayoteTimeCounter > 0f) // if it is within the cayote time and jump buffer time
         {       
             rb.velocity = new Vector2(rb.velocity.x, jumpForce); // accelerate the y velocity, i.e jump
             canDoubleJump = true;
+            jumpBufferCounter = 0f;
            
         }
-        
-        // DOUBLE JUMP
-        else if (Input.GetButtonDown("Jump") && canDoubleJump && !IsGround()) // if jump is pressed and the player is not on the platform
+
+        else if (Input.GetButtonDown("Jump") && canDoubleJump) // if jump is pressed and the player is not on the platform
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce+0.5f); // // accelerate the y velocity, i.e jump
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce+0.8f); // // accelerate the y velocity, i.e jump
             canDoubleJump = false;
         
-        }
+        } 
 
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y*1f);        
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y *1f);
+            cayoteTimeCounter = 0f;
         }
+        
+        // DOUBLE JUMP
+           
 
         Flip();
     
@@ -99,7 +135,7 @@ public class controls : MonoBehaviour
 
     private bool IsGround() // checking if the player is standing on the platform
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.33f, groundLayer);
+        return Physics2D.OverlapCircle(groundCheck.position, 0.28f, groundLayer);
         
     }
 
