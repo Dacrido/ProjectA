@@ -13,10 +13,10 @@ public class controls : MonoBehaviour
     private float horizontal; 
     private float currentSpeed; 
     private float acceleration;
-    private float maxSpeed = 5.5f;
+    private float maxSpeed = 5.3f;
 
     //jump
-    private float jumpForce = 6.6f;
+    private float jumpForce = 7.5f;
     private bool isFacingRight = true;
     private bool canDoubleJump = true;
     //improving jump
@@ -25,8 +25,14 @@ public class controls : MonoBehaviour
     private float jumpBufferTime = 0.15f;
     private float jumpBufferCounter;
 
-    
+    // dash
+    private bool canDash = true;
+    public bool isDashing;
+    private float dashPower = 21.5f;
+    private float dashTime = 0.2f;
+    private float dashCooldown = 0.6f;
 
+    
 
     //player physics and structure
     [SerializeField] private Rigidbody2D rb;
@@ -47,6 +53,10 @@ public class controls : MonoBehaviour
         //check if left/right input is pressed
         horizontal = Input.GetAxisRaw("Horizontal");//horizontal input updated every frame
         
+        if (isDashing)
+        {   
+            return;
+        } 
 
         // player can jump after a short amount of time after they have left the platform
         if (IsGround())
@@ -66,6 +76,13 @@ public class controls : MonoBehaviour
             jumpBufferCounter -= Time.deltaTime; 
 
         }
+
+        //DASH
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            StartCoroutine(Dash());
+        }
+
 
         //JUMP
         if (jumpBufferCounter > 0f && cayoteTimeCounter > 0f) // if it is within the cayote time and jump buffer time
@@ -112,7 +129,10 @@ public class controls : MonoBehaviour
         }*/    
         //rb.velocity = new Vector2((horizontal) * currentSpeed, rb.velocity.y);
         
-        
+        if (isDashing)
+        {        
+            return;
+        } 
         rb.velocity = new Vector2((horizontal) * maxSpeed, rb.velocity.y);
 
         
@@ -138,5 +158,24 @@ public class controls : MonoBehaviour
         return Physics2D.OverlapCircle(groundCheck.position, 0.28f, groundLayer);
         
     }
+
+    //dash
+    private IEnumerator Dash()
+    {  
+        Physics2D.IgnoreLayerCollision(3, 7, true); // phase through enemies while dashing
+        canDash = false;
+        isDashing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f; // we dont want gravity to affect while dashing
+        rb.velocity = new Vector2(transform.localScale.x * dashPower, 0f); // dash
+        
+        yield return new WaitForSeconds(dashTime); // dash for x seconds
+        Physics2D.IgnoreLayerCollision(3, 7, false); // stop phasing
+        rb.gravityScale = originalGravity; 
+        isDashing = false;
+        yield return new WaitForSeconds(dashCooldown); //can't dash while cooldown
+        canDash = true;
+    }
+
 
 }
