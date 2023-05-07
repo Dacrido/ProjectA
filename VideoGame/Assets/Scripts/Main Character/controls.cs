@@ -14,6 +14,9 @@ public class controls : MonoBehaviour
     private float currentSpeed; 
     private float acceleration;
     private float maxSpeed = 5.3f;
+    
+    private float acceleration_time = 0.2f;
+    private float time_counter;
 
     //jump
     private float jumpForce = 7.5f;
@@ -28,7 +31,7 @@ public class controls : MonoBehaviour
     // dash
     private bool canDash = true;
     public bool isDashing;
-    private float dashPower = 21.5f;
+    private float dashPower = 20f;
     private float dashTime = 0.2f;
     private float dashCooldown = 0.6f;
 
@@ -45,6 +48,7 @@ public class controls : MonoBehaviour
     void Start()
     {
         currentSpeed = 0f;
+        time_counter = 0f;
     }
 
     // Update is called once per frame
@@ -53,6 +57,7 @@ public class controls : MonoBehaviour
         //check if left/right input is pressed
         horizontal = Input.GetAxisRaw("Horizontal");//horizontal input updated every frame
         
+        // cant do any other action while dashing
         if (isDashing)
         {   
             return;
@@ -70,11 +75,9 @@ public class controls : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             jumpBufferCounter = jumpBufferTime; 
-
         } else
         {
             jumpBufferCounter -= Time.deltaTime; 
-
         }
 
         //DASH
@@ -95,14 +98,14 @@ public class controls : MonoBehaviour
 
         else if (Input.GetButtonDown("Jump") && canDoubleJump) // if jump is pressed and the player is not on the platform
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce+0.8f); // // accelerate the y velocity, i.e jump
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce-0.4f); // // accelerate the y velocity, i.e jump
             canDoubleJump = false;
         
         } 
 
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y *1f);
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y*1f);
             cayoteTimeCounter = 0f;
         }
         
@@ -116,27 +119,55 @@ public class controls : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDashing)
+        {        
+            return;
+        }  
+        
+        
+        rb.velocity = new Vector2(maxSpeed*horizontal, rb.velocity.y);
+        
         //movement speed formula for smoother gameplay
 
         // TESTING PURPOSES
         /*
-        if (horizontal == 0 && currentSpeed > 0){
-            while (currentSpeed > 0) currentSpeed -= 0.1f;
+        if (time_counter < acceleration_time){
+            time_counter += Time.deltaTime;
+        }
+        acceleration = maxSpeed / time_counter;
+
+        if (currentSpeed < maxSpeed){
+            currentSpeed = maxSpeed - (acceleration*time_counter);
+        }
+        */
+       
+        /*
+        if (horizontal == 0){
+            rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
+            
+            if (time_counter < acceleration_time){
+                time_counter += Time.deltaTime;
+            }
+            acceleration = maxSpeed / time_counter;
+
+            if (currentSpeed < maxSpeed){
+                currentSpeed = maxSpeed - (-acceleration*time_counter);
+            }
+
         }
 
-        else if (horizontal != 0&& currentSpeed < maxSpeed){
-            currentSpeed += 1f;
-        }*/    
-        //rb.velocity = new Vector2((horizontal) * currentSpeed, rb.velocity.y);
+        else if (horizontal > 0){
+            
+        }
         
-        if (isDashing)
-        {        
-            return;
-        } 
-        rb.velocity = new Vector2((horizontal) * maxSpeed, rb.velocity.y);
+        else if (horizontal < 0){
+            
+        }*/
+
+
+         
 
         
-
         
 
     }
