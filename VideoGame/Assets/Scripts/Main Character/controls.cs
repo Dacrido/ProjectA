@@ -10,14 +10,14 @@ public class controls : MonoBehaviour
 
 
     //movement
-    private float horizontal; 
+    [System.NonSerialized] public float horizontal; 
     private float currentSpeed; 
     private float acceleration;
     private float maxSpeed = 5.3f;
 
     //jump
     private float jumpForce = 7.5f;
-    private bool isFacingRight = true;
+    [System.NonSerialized] public bool isFacingRight = true;
     private bool canDoubleJump = true;
     //improving jump
     private float cayoteTime = 0.15f;
