@@ -6,22 +6,24 @@ public class controls : MonoBehaviour
 {
 
     [SerializeField] private Animator anim;
-
-
-
-    //movement
-    [System.NonSerialized] public float horizontal; 
-    private float currentSpeed; 
-    private float acceleration;
-    private float maxSpeed = 5.3f;
     
-    private float acceleration_time = 0.2f;
-    private float time_counter;
+     //movement
+    [System.NonSerialized] public float horizontal; 
+    //smoother movement using acceleration/deceleration system
+    private float acceleration_rate = 36.66667f;
+    private float acceleration_time = 0.15f;
+    private float time_counter;  
+    private float currentSpeed;  
+    private float maxSpeed = 5.5f;
+    private float deceleration_time;
+    private float deceleration_rate = 27.5f;
+
 
     //jump
     private float jumpForce = 7.5f;
     [System.NonSerialized] public bool isFacingRight = true;
     private bool canDoubleJump = true;
+    
     //improving jump
     private float cayoteTime = 0.15f;
     private float cayoteTimeCounter;
@@ -38,9 +40,28 @@ public class controls : MonoBehaviour
     
 
     //player physics and structure
-    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] public Rigidbody2D rb;
     [SerializeField] public Transform groundCheck; //for checking the ground
     [SerializeField] private LayerMask groundLayer; // ground layer
+
+    // shooting
+    public Transform attackpoint;
+    public Transform attackpoint2;
+    public Transform attackpoint3;
+
+    public GameObject arrowPrefab;
+    public GameObject chargedArrow;
+    
+    
+    private float nextAttackTime = 0f;
+    private float attackRate = 1.5f;
+
+    private float charge_time = 0.7f;
+    private float time_counter_attack;
+
+
+    private bool multiArrow = false;
+
 
 
 
@@ -49,6 +70,7 @@ public class controls : MonoBehaviour
     {
         currentSpeed = 0f;
         time_counter = 0f;
+        time_counter_attack = 0f;
     }
 
     // Update is called once per frame
@@ -62,6 +84,28 @@ public class controls : MonoBehaviour
         {   
             return;
         } 
+
+
+        
+        if (Time.time >= nextAttackTime)
+        {
+            if (Input.GetKey(KeyCode.F)){
+                time_counter_attack += Time.deltaTime;
+            }
+
+            
+            else if (Input.GetKeyUp(KeyCode.F)){
+                if (time_counter_attack > charge_time) SpawnArrowHeavy();
+
+                else SpawnArrowLight();
+                
+
+                nextAttackTime = Time.time + 1f/attackRate;
+                time_counter_attack = 0;
+            
+            }
+        }
+
 
         // player can jump after a short amount of time after they have left the platform
         if (IsGround())
@@ -111,7 +155,8 @@ public class controls : MonoBehaviour
         
         // DOUBLE JUMP
            
-
+        if (Input.GetKeyUp(KeyCode.X))  multiArrow = !multiArrow;
+        
         Flip();
     
     }
@@ -124,51 +169,38 @@ public class controls : MonoBehaviour
             return;
         }  
         
-        
-        rb.velocity = new Vector2(maxSpeed*horizontal, rb.velocity.y);
-        
-        //movement speed formula for smoother gameplay
+        rb.velocity = new Vector2(horizontal*maxSpeed, rb.velocity.y);
 
-        // TESTING PURPOSES
+        //STILL UNDER TESTING
+        //movement speed formula for smoother movement gameplay   
         /*
-        if (time_counter < acceleration_time){
+        if (horizontal != 0){
             time_counter += Time.deltaTime;
-        }
-        acceleration = maxSpeed / time_counter;
 
-        if (currentSpeed < maxSpeed){
-            currentSpeed = maxSpeed - (acceleration*time_counter);
+            if (currentSpeed < maxSpeed) 
+            {
+                currentSpeed = acceleration_rate * time_counter;
+            } else time_counter = 0;
+            
+            rb.velocity = new Vector2(currentSpeed * horizontal, rb.velocity.y);
         }
-        */
-       
-        /*
-        if (horizontal == 0){
+
+        else if (horizontal == 0) 
+        {
+            time_counter -= Time.deltaTime;
+            
+            if (currentSpeed > 0){
+                currentSpeed = acceleration_rate * time_counter;
+            } else {
+                time_counter = 0;
+                currentSpeed = 0;
+            }
             rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
-            
-            if (time_counter < acceleration_time){
-                time_counter += Time.deltaTime;
-            }
-            acceleration = maxSpeed / time_counter;
-
-            if (currentSpeed < maxSpeed){
-                currentSpeed = maxSpeed - (-acceleration*time_counter);
-            }
-
         }
-
-        else if (horizontal > 0){
-            
-        }
-        
-        else if (horizontal < 0){
-            
-        }*/
-
-
-         
+          */
 
         
-        
+               
 
     }
 
@@ -180,6 +212,11 @@ public class controls : MonoBehaviour
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
+            
+            attackpoint.transform.Rotate(0f,0f, 180f);
+            attackpoint2.transform.Rotate(0f,0f, 180f);
+            attackpoint3.transform.Rotate(0f,0f, 180f);
+
             
         }      
     }
@@ -207,6 +244,30 @@ public class controls : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown); //can't dash while cooldown
         canDash = true;
     }
+
+
+    void SpawnArrowLight(){
+        
+        if (multiArrow){
+            Instantiate(arrowPrefab, attackpoint.position, attackpoint.rotation);
+            Instantiate(arrowPrefab, attackpoint2.position, attackpoint2.rotation);
+            Instantiate(arrowPrefab, attackpoint3.position, attackpoint3.rotation);
+            return;
+        }
+            
+        Instantiate(arrowPrefab, attackpoint.position, attackpoint.rotation);
+
+    }
+
+    void SpawnArrowHeavy(){
+        
+        Instantiate(chargedArrow, attackpoint.position, attackpoint.rotation);
+
+        
+        
+    }
+
+
 
 
 }

@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 5022851818448755712}
   - component: {fileID: 5022851818448755715}
   m_Layer: 0
-  m_Name: arrow_tester
+  m_Name: light_arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
