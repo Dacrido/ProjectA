@@ -94,7 +94,7 @@ public class controls : MonoBehaviour
 
         else if (Input.GetButtonDown("Jump") && canDoubleJump) // if jump is pressed and the player is not on the platform
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce-0.4f); // // accelerate the y velocity, i.e jump
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce-1f); // // accelerate the y velocity, i.e jump
             canDoubleJump = false;
         
         } 
