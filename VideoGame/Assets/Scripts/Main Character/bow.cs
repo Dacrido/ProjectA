@@ -12,6 +12,7 @@ public class bow : MonoBehaviour
     public GameObject arrowPrefab;
     public GameObject chargedArrow;
     
+    public Transform inventory;
     
     private float nextAttackTime = 0f;
     private float attackRate = 1.3f;
@@ -32,26 +33,31 @@ public class bow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Time.time >= nextAttackTime) // if the time is more than the 
+        if (inventory == null) return;
+        
+        if (transform.IsChildOf(inventory))
         {
-            if (Input.GetKey(KeyCode.F)){
-                time_counter_attack += Time.deltaTime;
-            }
+            if (Time.time >= nextAttackTime) // if the time is more than the 
+            {
+                if (Input.GetKey(KeyCode.F)){
+                    time_counter_attack += Time.deltaTime;
+                }
 
-            
-            else if (Input.GetKeyUp(KeyCode.F)){
-                if (time_counter_attack > charge_time) SpawnArrowHeavy();
-
-                else SpawnArrowLight();
                 
+                else if (Input.GetKeyUp(KeyCode.F)){
+                    if (time_counter_attack > charge_time) SpawnArrowHeavy();
 
-                nextAttackTime = Time.time + 1f/attackRate;
-                time_counter_attack = 0;
-            
+                    else SpawnArrowLight();
+                    
+
+                    nextAttackTime = Time.time + 1f/attackRate;
+                    time_counter_attack = 0;
+                
+                }
             }
-        }
 
-        if (Input.GetKeyUp(KeyCode.X))  multiArrow = !multiArrow;
+            if (Input.GetKeyUp(KeyCode.X))  multiArrow = !multiArrow;
+        }
     }
 
     void SpawnArrowLight(){
