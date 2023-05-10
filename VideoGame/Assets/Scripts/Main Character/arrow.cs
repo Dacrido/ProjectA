@@ -29,20 +29,23 @@ public class arrow : MonoBehaviour
     
     void Start()
     {
-        if (other.isFacingRight == true) rb.velocity = new Vector2(speed, rb.velocity.y);
 
-        else if (other.isFacingRight == false) rb.velocity = new Vector2(-speed, rb.velocity.y);
-        
-    
+        if (other.isFacingRight) rb.velocity = new Vector2(speed, rb.velocity.y);
+
+        else if (!other.isFacingRight) rb.velocity = new Vector2(-speed, rb.velocity.y);
 
     }
 
-    // Update is called once per frame
     void Update()
+    {
+
+    }
+
+    
+    void Damage()
     {
         
     }
-
 
     
 }
