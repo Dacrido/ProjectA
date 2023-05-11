@@ -8,7 +8,7 @@ public class controls : MonoBehaviour
     [SerializeField] private Animator anim;
     
      //movement
-    [System.NonSerialized] public float horizontal; 
+    private float horizontal; 
     //smoother movement using acceleration/deceleration system
     private float acceleration_rate = 36.66667f;
     private float acceleration_time = 0.15f;
@@ -18,7 +18,7 @@ public class controls : MonoBehaviour
     private float deceleration_time;
     private float deceleration_rate = 27.5f;
 
-
+    // 
     //jump
     private float jumpForce = 7.5f;
     [System.NonSerialized] public bool isFacingRight = true;
@@ -44,23 +44,7 @@ public class controls : MonoBehaviour
     [SerializeField] public Transform groundCheck; //for checking the ground
     [SerializeField] private LayerMask groundLayer; // ground layer
 
-    // shooting
-    public Transform attackpoint;
-    public Transform attackpoint2;
-    public Transform attackpoint3;
-
-    public GameObject arrowPrefab;
-    public GameObject chargedArrow;
     
-    
-    private float nextAttackTime = 0f;
-    private float attackRate = 1.5f;
-
-    private float charge_time = 0.7f;
-    private float time_counter_attack;
-
-
-    private bool multiArrow = false;
 
 
 
@@ -70,7 +54,7 @@ public class controls : MonoBehaviour
     {
         currentSpeed = 0f;
         time_counter = 0f;
-        time_counter_attack = 0f;
+        
     }
 
     // Update is called once per frame
@@ -80,55 +64,23 @@ public class controls : MonoBehaviour
         horizontal = Input.GetAxisRaw("Horizontal");//horizontal input updated every frame
         
         // cant do any other action while dashing
-        if (isDashing)
-        {   
-            return;
-        } 
-
-
-        
-        if (Time.time >= nextAttackTime)
-        {
-            if (Input.GetKey(KeyCode.F)){
-                time_counter_attack += Time.deltaTime;
-            }
-
-            
-            else if (Input.GetKeyUp(KeyCode.F)){
-                if (time_counter_attack > charge_time) SpawnArrowHeavy();
-
-                else SpawnArrowLight();
-                
-
-                nextAttackTime = Time.time + 1f/attackRate;
-                time_counter_attack = 0;
-            
-            }
-        }
+        if (isDashing) return; 
 
 
         // player can jump after a short amount of time after they have left the platform
-        if (IsGround())
-        {
-            cayoteTimeCounter = cayoteTime;
-        } else
-        {
-            cayoteTimeCounter -= Time.deltaTime;
-        }
+        if (IsGround()) cayoteTimeCounter = cayoteTime;
+        
+        else cayoteTimeCounter -= Time.deltaTime;
+        
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            jumpBufferCounter = jumpBufferTime; 
-        } else
-        {
-            jumpBufferCounter -= Time.deltaTime; 
-        }
+        if (Input.GetButtonDown("Jump")) jumpBufferCounter = jumpBufferTime; 
+        
+        else jumpBufferCounter -= Time.deltaTime; 
+        
 
         //DASH
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
-        {
-            StartCoroutine(Dash());
-        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash) StartCoroutine(Dash());
+ 
 
 
         //JUMP
@@ -142,11 +94,11 @@ public class controls : MonoBehaviour
 
         else if (Input.GetButtonDown("Jump") && canDoubleJump) // if jump is pressed and the player is not on the platform
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce-0.4f); // // accelerate the y velocity, i.e jump
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce-1f); // // accelerate the y velocity, i.e jump
             canDoubleJump = false;
         
         } 
-
+        // When Jump is released
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y*1f);
@@ -155,19 +107,24 @@ public class controls : MonoBehaviour
         
         // DOUBLE JUMP
            
-        if (Input.GetKeyUp(KeyCode.X))  multiArrow = !multiArrow;
         
-        Flip();
+        
+        if (horizontal < 0f && isFacingRight){
+            Flip();
+            isFacingRight = !isFacingRight;
+        }
+
+        if (horizontal > 0f && !isFacingRight){
+            Flip();
+            isFacingRight = !isFacingRight;
+        }
     
     }
 
 
     void FixedUpdate()
     {
-        if (isDashing)
-        {        
-            return;
-        }  
+        if (isDashing) return;
         
         rb.velocity = new Vector2(horizontal*maxSpeed, rb.velocity.y);
 
@@ -204,21 +161,11 @@ public class controls : MonoBehaviour
 
     }
 
-    private void Flip() // flipping the player sprite if they are moving in the opposite direction
+    private void Flip() 
     {
-        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
-        {
-            isFacingRight = !isFacingRight;
-            Vector3 localScale = transform.localScale;
-            localScale.x *= -1f;
-            transform.localScale = localScale;
-            
-            attackpoint.transform.Rotate(0f,0f, 180f);
-            attackpoint2.transform.Rotate(0f,0f, 180f);
-            attackpoint3.transform.Rotate(0f,0f, 180f);
+        // flipping the player sprite if they are moving in the opposite direction
+        gameObject.transform.Rotate(0f,180f,0f);
 
-            
-        }      
     }
 
     private bool IsGround() // checking if the player is standing on the platform
@@ -235,7 +182,8 @@ public class controls : MonoBehaviour
         isDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f; // we dont want gravity to affect while dashing
-        rb.velocity = new Vector2(transform.localScale.x * dashPower, 0f); // dash
+        
+        rb.velocity = new Vector2(horizontal*dashPower, 0f); // dash
         
         yield return new WaitForSeconds(dashTime); // dash for x seconds
         Physics2D.IgnoreLayerCollision(3, 7, false); // stop phasing
@@ -246,28 +194,6 @@ public class controls : MonoBehaviour
     }
 
 
-    void SpawnArrowLight(){
-        
-        if (multiArrow){
-            Instantiate(arrowPrefab, attackpoint.position, attackpoint.rotation);
-            Instantiate(arrowPrefab, attackpoint2.position, attackpoint2.rotation);
-            Instantiate(arrowPrefab, attackpoint3.position, attackpoint3.rotation);
-            return;
-        }
-            
-        Instantiate(arrowPrefab, attackpoint.position, attackpoint.rotation);
-
-    }
-
-    void SpawnArrowHeavy(){
-        
-        Instantiate(chargedArrow, attackpoint.position, attackpoint.rotation);
-
-        
-        
-    }
-
-
-
+    
 
 }

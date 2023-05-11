@@ -20,6 +20,7 @@ public class arrow : MonoBehaviour
 
     private int ammo;
 
+    private float time_counter;
     
     // Start is called before the first frame update
     void Awake(){
@@ -29,20 +30,32 @@ public class arrow : MonoBehaviour
     
     void Start()
     {
-        if (other.isFacingRight == true) rb.velocity = new Vector2(speed, rb.velocity.y);
 
-        else if (other.isFacingRight == false) rb.velocity = new Vector2(-speed, rb.velocity.y);
-        
-    
+        if (other.isFacingRight) rb.velocity = new Vector2(speed, rb.velocity.y);
+
+        else if (!other.isFacingRight) rb.velocity = new Vector2(-speed, rb.velocity.y);
 
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        if (time_counter> 2.5f) Destroy(gameObject);
+       
+        time_counter += Time.deltaTime;
+    }
+
+    
+    void Damage()
     {
         
     }
 
+    void OnCollisionEnter2D(Collision2D other){
+        if (other.gameObject.tag == "Enemy"){
+            Destroy(gameObject);
+            Destroy(other.gameObject);
+        }
+    }
 
     
 }
