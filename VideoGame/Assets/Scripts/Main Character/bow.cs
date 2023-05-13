@@ -15,7 +15,7 @@ public class bow : MonoBehaviour
     public Transform inventory;
     
     private float nextAttackTime = 0f;
-    private float attackRate = 1.3f;
+    private float attackRate = 1.8f;
 
     private float charge_time = 0.7f;
     private float time_counter_attack;
