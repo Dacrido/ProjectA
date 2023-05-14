@@ -11,7 +11,7 @@ public class Temporary_Character_Movement : MonoBehaviour
     private float v_input;
     private float speed = 10.0f;
     private float jumpPower = 8f;
-
+    private bool lockInPlace = false;
     
     [Flags]
     private enum Directions
@@ -23,16 +23,17 @@ public class Temporary_Character_Movement : MonoBehaviour
     }
 
     private Directions current_Dir = Directions.Right;
+    private float current_Angle = 0f;
+    private Vector3 groundCheckOffset;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private UnityEngine.Object weapon;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        groundCheckOffset = groundCheck.localPosition;
     }
 
     // Update is called once per frame
@@ -40,6 +41,13 @@ public class Temporary_Character_Movement : MonoBehaviour
     {
         h_input = Input.GetAxis("Horizontal");
         v_input = Input.GetAxis("Vertical");
+
+        
+        lockInPlace = isLock();
+        Direction();
+
+        if (lockInPlace) { return; }
+
         if (Input.GetButtonDown("Jump") && isGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpPower);
@@ -50,26 +58,33 @@ public class Temporary_Character_Movement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
-        Direction();
-        RotateWeapon();
+
     }
 
     void FixedUpdate()
-    {
+    {   
+        if (lockInPlace)
+        {
+            rb.velocity = new Vector2(0f, 0f);
+            return;
+        }
         rb.velocity = new Vector2(h_input * speed, rb.velocity.y); // Time.deltaTime not needed when dealing with forces. 
     }
-
+    
+    private bool isLock()
+    {   
+        if (!isGrounded()) {  return false; }
+        if (Input.GetKey(KeyCode.LeftControl)) { return true; } return false;
+    }
     private bool isGrounded()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer); // Creates a small invisible circle (radius of 0.2f) at the player's feet, and checks if it collides with groundLayer, which are all objects/tiles that have the 'ground' layer set
-    
-    
+        return Physics2D.OverlapCircle(groundCheck.position, 0.4f, groundLayer); // Creates a small invisible circle (radius of 0.2f) at the player's feet, and checks if it collides with groundLayer, which are all objects/tiles that have the 'ground' layer set
     }
 
     private void Direction() // Vertical input preceds horizontal input in terms of direction
     {
         Directions dir;
-        if (Input.GetKeyDown(KeyCode.LeftControl))
+        if (lockInPlace)
         {
             dir = verticalInputDir() | horizontalInputDir(); // Combining the two directions
         } else 
@@ -80,6 +95,7 @@ public class Temporary_Character_Movement : MonoBehaviour
         if (dir !=0)
         {
             current_Dir = dir;
+            RotateWeapon();
         }
         
     }
@@ -111,6 +127,36 @@ public class Temporary_Character_Movement : MonoBehaviour
 
     private void RotateWeapon()
     {
-        weapon.
+
+       
+       switch (current_Dir)
+        {
+            case Directions.Right:
+                current_Angle = 0f;
+                break;
+            case Directions.Up:
+                current_Angle = 90f;
+                break;
+            case Directions.Left:
+                current_Angle = 180f;
+                break;
+            case Directions.Down:
+                current_Angle = 270f;
+                break;
+            case Directions.Right | Directions.Up:
+                current_Angle = 45f;
+                break;
+            case Directions.Left | Directions.Up:
+                current_Angle = 135f;
+                break;
+            case Directions.Left | Directions.Down:
+                current_Angle = 225f;
+                break;
+            case Directions.Right | Directions.Down:
+                current_Angle = 315f;
+                break;
+        }
+        transform.rotation = Quaternion.Euler(0f, 0f, current_Angle);
+        groundCheck.position = transform.position + groundCheckOffset;
     }
 }  
