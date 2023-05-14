@@ -15,7 +15,7 @@ public class inventory : MonoBehaviour
     void Start()
     {
         
-        inventory_length = 2; // not functionaL
+        inventory_length = 2; // not functional
     }
 
     // Update is called once per frame
@@ -27,13 +27,7 @@ public class inventory : MonoBehaviour
 
     void pickUp(Collision2D col) // pick up weapon 
     {
-        /*for (int i = 0; i < inventory_length; i++)
-        {
-            if (inventory_slots[i] == false){
-                inventory_slots[i] = true;
-                break;
-            }
-        }*/
+        
         if (col.gameObject.tag == "Weapon") // if the collision is a weapon type
         {
             weapon = col.gameObject; // store the weapon object in a variable
