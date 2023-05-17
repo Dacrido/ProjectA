@@ -8501,8 +8501,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 245732966}
     - target: {fileID: 4666148561614019806, guid: e09675e8671ed4f43a5ded06770f91f4, type: 3}
+      propertyPath: m_Radius
+      value: 0.26025173
+      objectReference: {fileID: 0}
+    - target: {fileID: 4666148561614019806, guid: e09675e8671ed4f43a5ded06770f91f4, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4666148561614019806, guid: e09675e8671ed4f43a5ded06770f91f4, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.039261293
+      objectReference: {fileID: 0}
+    - target: {fileID: 4666148561614019806, guid: e09675e8671ed4f43a5ded06770f91f4, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.012834716
       objectReference: {fileID: 0}
     - target: {fileID: 4666148561614019806, guid: e09675e8671ed4f43a5ded06770f91f4, type: 3}
       propertyPath: m_IsTrigger
