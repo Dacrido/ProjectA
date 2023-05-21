@@ -4,6 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+[Flags]
+public enum Directions // Flags public to be used by other scripts
+{
+    Right = 1,
+    Left = 2,
+    Up = 4,
+    Down = 8
+}
+
 public class Temporary_Character_Movement : MonoBehaviour
 {
 
@@ -13,14 +22,7 @@ public class Temporary_Character_Movement : MonoBehaviour
     private float jumpPower = 8f;
     private bool lockInPlace = false;
     
-    [Flags]
-    private enum Directions
-    {
-        Right = 1, 
-        Left = 2,
-        Up = 4, 
-        Down = 8
-    }
+    
 
     private Directions current_Dir = Directions.Right;
     private float current_Angle = 0f;
@@ -29,6 +31,7 @@ public class Temporary_Character_Movement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+
 
     // Start is called before the first frame update
     void Start()
@@ -159,4 +162,6 @@ public class Temporary_Character_Movement : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, current_Angle);
         groundCheck.position = transform.position + groundCheckOffset;
     }
+
+    
 }  
