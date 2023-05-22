@@ -11,7 +11,7 @@ public class Temp_Projectile : MonoBehaviour
     void Start()
     {
         rb.AddForce(transform.right * speed);
-        Destroy(gameObject, 0.5f); // Projectile despawns if either 0.5 seconds passed, collides with the ground layer, or hits an enemy
+        Destroy(gameObject, 1.5f); // Projectile despawns if either 1.5 seconds passed, collides with the ground layer, or hits an enemy
     }
 
     // Update is called once per frame

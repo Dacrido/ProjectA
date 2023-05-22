@@ -2,13 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleWalking : MonoBehaviour
+public class SimpleFlying : MonoBehaviour
 {
-
-    [SerializeField] private float speed;
-    private Directions prefered_Dir;
-    
-    // Start is called before the first frame update    
+    // Start is called before the first frame update
     void Start()
     {
         

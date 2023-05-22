@@ -32,5 +32,7 @@ public class FillStatusBar : MonoBehaviour
 
         float fillAmount = (float) health.currentHealth / (float) health.maxHealth;
         slider.value = fillAmount;
+
+        // Rotation for enemies and player is frozen, so there isn't any issue with keeping the health bar above enemies. Plus, it's a side view game
     }
 }

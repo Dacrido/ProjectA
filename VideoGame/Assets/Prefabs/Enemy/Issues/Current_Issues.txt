@@ -1,5 +1,5 @@
 1. All collisions physically affect objects involed, knocking them widly. The only thing that should be affected by collisions (for now) is health. 
-2. Health bars for all enemies must be made and visible, reflecting all their health.
+2. Health bars for all enemies must be made and visible, reflecting all their health. [Completed]
 3. Physical collisions between player and enemies should deal damage over the course of time they stay collided, not only when they collide initially. (Perhaps OnTriggerExit?)
 4. Diagonal directions to normal directions for the player have quite a delay (about 1/3 of a second). 
 5. Basic movement must be made for both walking and flying. Complex movement like player follow, dodging and pack system will be done later.  
