@@ -13,8 +13,7 @@ public class inventory : MonoBehaviour
     
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {    
         inventory_length = 2; // not functional
     }
 

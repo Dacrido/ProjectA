@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4621693195632350527}
   - component: {fileID: 4621693195632350524}
   m_Layer: 0
-  m_Name: heavy_arrow
+  m_Name: heavy_arrow 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   maxDistance: 30
   rb: {fileID: 4621693195632350526}
   impact: {fileID: 0}
-  player: {fileID: 110981985655310644, guid: 92c9d4c83c45dd245b2a4439a098c545, type: 3}
+  player: {fileID: 4621693195632350525, guid: 21b15f8ef2ed2734eb4fc8d9d72b5a24, type: 3}
   big_arrow: 1
 --- !u!1 &4621693196784550236
 GameObject:
