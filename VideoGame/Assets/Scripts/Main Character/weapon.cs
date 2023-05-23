@@ -14,13 +14,16 @@ public class weapon : MonoBehaviour
 
     public GameObject player;
     private controls other;
+    private bool aim_mode = false;
+
+    
+    private float vertical_input;
+    
 
     void Awake(){
         GameObject player = GameObject.Find("player_default");     
         other = player.GetComponent<controls>(); 
     }
-    
-
 
     // Start is called before the first frame update
     
@@ -29,26 +32,24 @@ public class weapon : MonoBehaviour
         time_counter = 0f;
     }
 
-
-
-
     // Update is called once per frame
     void Update()
-    {
-        
+    {        
         if (Input.GetKey(KeyCode.F)){
-            time_counter+= Time.deltaTime;
-            
+            time_counter+= Time.deltaTime;       
         }
 
         else if (Input.GetKeyUp(KeyCode.F)){
             if (time_counter > charge_time) SpawnArrowHeavy();
 
-            else SpawnArrowLight();
-
-            time_counter = 0;
+            else SpawnArrowLight();  
             
+            
+              
+            time_counter = 0;     
         }
+
+        
        
 
     }

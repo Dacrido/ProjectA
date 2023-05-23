@@ -11,19 +11,20 @@ public class bow : MonoBehaviour
 
     public GameObject arrowPrefab;
     public GameObject chargedArrow;
-    
+  
     public Transform inventory;
     
     private float nextAttackTime = 0f;
-    private float attackRate = 1.3f;
+    private float attackRate = 1.8f;
 
     private float charge_time = 0.7f;
     private float time_counter_attack;
 
 
-    private bool multiArrow = false; 
+    public bool multiArrow = false; 
+    public bool charged_mode;
     
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +46,7 @@ public class bow : MonoBehaviour
 
                 
                 else if (Input.GetKeyUp(KeyCode.F)){
-                    if (time_counter_attack > charge_time) SpawnArrowHeavy();
+                    if ((time_counter_attack > charge_time) && charged_mode) SpawnArrowHeavy();
 
                     else SpawnArrowLight();
                     
@@ -54,15 +55,13 @@ public class bow : MonoBehaviour
                     time_counter_attack = 0;
                 
                 }
-            }
-
-            if (Input.GetKeyUp(KeyCode.X))  multiArrow = !multiArrow;
+            }        
         }
     }
 
     void SpawnArrowLight(){
         
-        if (multiArrow){
+        if (multiArrow && (attackpoint2 != null && attackpoint3 != null)){
             Instantiate(arrowPrefab, attackpoint.position, attackpoint.rotation); // spawn arrows at attackpoint
             Instantiate(arrowPrefab, attackpoint2.position, attackpoint.rotation);
             Instantiate(arrowPrefab, attackpoint3.position, attackpoint.rotation);
@@ -75,7 +74,7 @@ public class bow : MonoBehaviour
 
     void SpawnArrowHeavy(){
         
-        Instantiate(chargedArrow, attackpoint.position, attackpoint.rotation);       
+        if (chargedArrow != null) Instantiate(chargedArrow, attackpoint.position, attackpoint.rotation);       
     }
 
     
