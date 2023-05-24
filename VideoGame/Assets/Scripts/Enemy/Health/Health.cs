@@ -13,8 +13,6 @@ public class Health : MonoBehaviour
     void Start() // This is current health for enemies. When activated/spawned, whenever entering a new area, they start with max health
     {
         currentHealth = maxHealth;
-
-        if (gameObject.tag == "Player") { return; }
         HealthBar = GetComponentInChildren<Slider>();
         HealthBar.gameObject.SetActive(false);
     }
@@ -22,8 +20,7 @@ public class Health : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-        if (gameObject.tag == "Player") { return; }
-
+        
         if (HealthBar.gameObject.activeSelf && currentHealth == maxHealth) // If the health bar is active and the currentHealth is equal to the maxHealth, hide health bar after 3 seconds
         {
             StartCoroutine(Wait(2));
