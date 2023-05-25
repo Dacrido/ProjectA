@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5074526943950500633}
   - component: {fileID: 5074526943950500639}
   - component: {fileID: 5074526943950500632}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 5074526944792387335}
   - component: {fileID: 5074526944792387333}
   - component: {fileID: 5074526944792387334}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 5074526944809735836}
   - component: {fileID: 5074526944809735837}
   - component: {fileID: 5074526944809735838}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 5074526944868502654}
   - component: {fileID: 5074526944868502655}
   - component: {fileID: 5074526944868502648}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ground Walker
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -425,7 +425,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5074526944946688798}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 5074526945120198799}
   - component: {fileID: 5074526945120198798}
   - component: {fileID: 5074526945120198797}
-  m_Layer: 5
+  m_Layer: 7
   m_Name: Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}

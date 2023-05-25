@@ -21,8 +21,15 @@ public class Temporary_Character_Movement : MonoBehaviour
     private float speed = 10.0f;
     private float jumpPower = 8f;
     private bool lockInPlace = false;
-    
-    
+
+    [Flags]
+    public enum Directions // Flags public to be used by other scripts
+    {
+        Right = 1,
+        Left = 2,
+        Up = 4,
+        Down = 8
+    }
 
     private Directions current_Dir = Directions.Right;
     private float current_Angle = 0f;

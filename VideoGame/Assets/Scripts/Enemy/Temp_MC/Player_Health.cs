@@ -12,20 +12,27 @@ public class Player_Health : MonoBehaviour
     // Invincibility
     private float invincibileDuration = 1.5f;
     private bool isInvincible = false;
-    private SpriteRenderer Image;
+    private SpriteRenderer[] Images;
+
+    int playerLayer;
+    int enemyLayer;
 
     // Start is called before the first frame update
     void Start() // This is current health for enemies. When activated/spawned, whenever entering a new area, they start with max health
-    {
+    {   
+        playerLayer = LayerMask.NameToLayer("Player");
+        enemyLayer = LayerMask.NameToLayer("Enemy");
         currentHealth = maxHealth;
-        Image = GetComponent<SpriteRenderer>();
+        Images = GetComponentsInChildren<SpriteRenderer>(); // Gets all the spirte Renderer components (parent and children)
     }
 
     private IEnumerator temporaryInvincibility(float duration)
     {
         isInvincible = true;
+        Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer);
         yield return new WaitForSeconds(duration);
         isInvincible = false;
+        Physics2D.IgnoreLayerCollision(playerLayer, enemyLayer, false);
     }
 
     private IEnumerator flashInvincility(float duration)
@@ -33,11 +40,24 @@ public class Player_Health : MonoBehaviour
         float interval = 0.2f;
         float elapsedTime = 0f;
         while (elapsedTime < duration)
-        {
-            Image.color = new Color(1f, 1f, 1f, 0f);
+        {   
+            foreach (SpriteRenderer Image in Images)
+            {
+                Color color = Image.color;
+                color.a = 0f; // The opaqueness of the image
+                Image.color = color;
+            }
+            
             yield return new WaitForSeconds(interval);
-            Image.color = new Color(1f, 1f, 1f, 1f);
+
+            foreach (SpriteRenderer Image in Images)
+            {
+                Color color = Image.color;
+                color.a = 1f;
+                Image.color = color;
+            }            
             yield return new WaitForSeconds(interval);
+
             elapsedTime += interval * 2;
 
         }
