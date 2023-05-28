@@ -13,7 +13,7 @@ public class arrow : MonoBehaviour
     public GameObject impact;
     public GameObject player;
     
-
+    public bool big_arrow = false; 
 
     private controls other;
 
@@ -50,11 +50,17 @@ public class arrow : MonoBehaviour
         
     }
 
-    void OnCollisionEnter2D(Collision2D other){
-        if (other.gameObject.tag == "Enemy"){
-            Destroy(gameObject);
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Enemy")
+        {
+            if (!big_arrow) Destroy(gameObject);                    
             Destroy(other.gameObject);
         }
+
+        //Physics.IgnoreLayerCollision(0, 3);
+        
+
     }
 
     

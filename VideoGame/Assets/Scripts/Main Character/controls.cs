@@ -10,7 +10,7 @@ public class controls : MonoBehaviour
      //movement
     private float horizontal; 
     //smoother movement using acceleration/deceleration system
-    private float acceleration_rate = 36.66667f;
+    private float acceleration_rate = 50f;
     private float acceleration_time = 0.15f;
     private float time_counter;  
     private float currentSpeed;  
@@ -39,13 +39,19 @@ public class controls : MonoBehaviour
 
     
 
+    private bool aim_mode = false;
+    private float horizontal_input;
+    private Vector2 direction;
+    private float vertical_input;
+    private float aimAngle;
+
+
     //player physics and structure
     [SerializeField] public Rigidbody2D rb;
     [SerializeField] public Transform groundCheck; //for checking the ground
     [SerializeField] private LayerMask groundLayer; // ground layer
 
     
-
 
 
 
@@ -82,6 +88,7 @@ public class controls : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash) StartCoroutine(Dash());
  
 
+        
 
         //JUMP
         if (jumpBufferCounter > 0f && cayoteTimeCounter > 0f) // if it is within the cayote time and jump buffer time
@@ -118,6 +125,19 @@ public class controls : MonoBehaviour
             Flip();
             isFacingRight = !isFacingRight;
         }
+
+        if (aim_mode)
+        {                     
+            vertical_input = Input.GetAxis("Vertical");  
+                        
+            
+        }
+
+
+        if (Input.GetKeyUp(KeyCode.Y)){
+            aim_mode = !aim_mode;
+            Debug.Log(aim_mode);
+        }
     
     }
 
@@ -126,11 +146,11 @@ public class controls : MonoBehaviour
     {
         if (isDashing) return;
         
-        rb.velocity = new Vector2(horizontal*maxSpeed, rb.velocity.y);
+        //rb.velocity = new Vector2(horizontal*maxSpeed, rb.velocity.y);
 
         //STILL UNDER TESTING
         //movement speed formula for smoother movement gameplay   
-        /*
+        
         if (horizontal != 0){
             time_counter += Time.deltaTime;
 
@@ -152,9 +172,9 @@ public class controls : MonoBehaviour
                 time_counter = 0;
                 currentSpeed = 0;
             }
-            rb.velocity = new Vector2(currentSpeed, rb.velocity.y);
+            rb.velocity = new Vector2(currentSpeed * Time.deltaTime, rb.velocity.y);
         }
-          */
+          
 
         
                
