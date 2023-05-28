@@ -33,7 +33,7 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
     }
 
     // extraRayDistance: extra distance added to the ray say if the enemy is jumping off the ground
-    public bool isGrounded(float extraRayDistance) // Checks if the enemy is on the ground of not
+    public bool isGrounded(float extraRayDistance = 0.0f) // Checks if the enemy is on the ground of not
     {
         // Getting position of downwards ray
         Vector2 ray_Position = transform.position;
@@ -44,7 +44,7 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
         Vector2 ray_Direction = Vector2.down;
         float ray_Distance = 0.1f + extraRayDistance;
 
-        RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer);
+        RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer); // May have to change to a boxcast **********************************
 
         if (checkForGround.collider != null)
             return true;
@@ -73,7 +73,7 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
         direction *= -1;
     }
 
-    public void DefaultReaction(float extra)
+    public void DefaultReaction(float extra = 0.0f) // This method might have to change
     {
         if (!isGrounded(extra))
         {

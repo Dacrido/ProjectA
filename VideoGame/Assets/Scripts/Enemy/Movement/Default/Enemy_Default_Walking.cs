@@ -31,7 +31,7 @@ public class Enemy_Default_Walking : MonoBehaviour
     
     void Update()
     {
-        General.DefaultReaction(0.0f);
+        General.DefaultReaction();
     }
 
     
