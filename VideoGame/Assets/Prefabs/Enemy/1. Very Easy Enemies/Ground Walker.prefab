@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 5074526944868502654}
   - component: {fileID: 5074526944868502655}
   - component: {fileID: 5074526944868502648}
+  - component: {fileID: 6579921887369466198}
   - component: {fileID: 5002035010779138982}
   m_Layer: 7
   m_Name: Ground Walker
@@ -417,6 +418,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+--- !u!114 &6579921887369466198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074526944868502649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30fff5dc7a2f67c4e8e7d1d149060ebc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  direction: 0
 --- !u!114 &5002035010779138982
 MonoBehaviour:
   m_ObjectHideFlags: 0
