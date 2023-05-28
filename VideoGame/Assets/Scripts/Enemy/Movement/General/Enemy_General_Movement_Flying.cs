@@ -27,7 +27,7 @@ public class Enemy_General_Movement_Flying : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rb = GetComponent<Rigidbody2D>();
 
-        CalculateDirection();
+        movementDirection = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
     }
 
     void FixedUpdate()
@@ -39,38 +39,19 @@ public class Enemy_General_Movement_Flying : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            print("Collision");
-            CalculateDirection();
+            CalculateDirection(collision.contacts[0].normal);
         }
     }
 
-    void CalculateDirection() // Not random enough, causes problems
+    void CalculateDirection(Vector2 collisionDirection) 
     {
-        RaycastHit2D[] collisions = Physics2D.CircleCastAll(transform.position, radius, Vector2.zero, 0f, groundLayer);
+        float angle = Random.Range(-45f, 45f);
 
-        int minCollisions = int.MaxValue;
-        Vector2 bestDirection = Vector2.zero;
-        for (float angle = 0; angle < 360; angle += 10)
-        {
-            Vector2 direction = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)); // The direction based on the given angle of a part of a circle. Cosine for x coordinate, sin for y coordinate
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward); // Getting a rotation of angle degrees. Vector3.forward is used as it rotates the angle in the XY plane as the Z-axis is perpendicular to this plane
+        Vector2 direction = rotation * collisionDirection;
 
-            int currentCollisions = 0;
-            foreach(RaycastHit2D collision in collisions)
-            {
-                if (Vector2.Angle(collision.normal, direction) < 90)
-                {
-                    currentCollisions++;
-                }
-            }
+        movementDirection = direction;
 
-            if (currentCollisions < minCollisions)
-            {
-                minCollisions = currentCollisions;
-                bestDirection = direction;
-            }
-        }
-
-        movementDirection = bestDirection.normalized;
     }
 
 }
