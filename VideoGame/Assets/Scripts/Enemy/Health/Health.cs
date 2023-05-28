@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
     private Slider HealthBar;
+    private FillStatusBar HealthBarCode;
     public int maxHealth;
     [HideInInspector] public int currentHealth;
 
@@ -14,6 +15,7 @@ public class Health : MonoBehaviour
     {
         currentHealth = maxHealth;
         HealthBar = GetComponentInChildren<Slider>();
+        HealthBarCode = HealthBar.GetComponent<FillStatusBar>();
         HealthBar.gameObject.SetActive(false);
     }
 
@@ -48,6 +50,8 @@ public class Health : MonoBehaviour
             Destroy(gameObject);
         }
 
+        HealthBarCode.UpdateHealthBar();
+
     }
     
     public void healHealth(int health)
@@ -58,6 +62,8 @@ public class Health : MonoBehaviour
         {
             currentHealth = maxHealth;
         }
+
+        HealthBarCode.UpdateHealthBar();
     }
     
 }

@@ -1,6 +1,4 @@
-1. All collisions physically affect objects involed, knocking them widly. The only thing that should be affected by collisions (for now) is health. 
-2. Health bars for all enemies must be made and visible, reflecting all their health. [Completed]
-3. Physical collisions between player and enemies should deal damage over the course of time they stay collided, not only when they collide initially. (Perhaps OnTriggerExit?)
-4. Diagonal directions to normal directions for the player have quite a delay (about 1/3 of a second). 
-5. Basic movement must be made for both walking and flying. Complex movement like player follow, dodging and pack system will be done later.  
-6. Temp_MC must be changed to the real MC, and must make sure everything stills works perfectly (this will be done later)
+- All collisions physically affect objects involed, knocking them widly. The only thing that should be affected by collisions (for now) is health. 
+- Diagonal directions to normal directions for the player have quite a delay (about 1/3 of a second). 
+- When enemies stack on top of each other, one projectile hits all of them at once. Normal projectiles should only hit one enemy at a time
+- The player and enemies can sometimes (quite rarely but happens) get stuck to the ground and unable to move. Most likely at error in how their rigidbodies are set up, but not sure

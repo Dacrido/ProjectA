@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 5074526944868502654}
   - component: {fileID: 5074526944868502655}
   - component: {fileID: 5074526944868502648}
+  - component: {fileID: 5002035010779138982}
   m_Layer: 7
   m_Name: Ground Walker
   m_TagString: Enemy
@@ -372,7 +373,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 5074526944868502649}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: e695fd1ac15e0054f815d2511dce8376, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -416,6 +417,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+--- !u!114 &5002035010779138982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5074526944868502649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ce7ad32647e5f428b04104090742b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 3
 --- !u!1 &5074526944946688799
 GameObject:
   m_ObjectHideFlags: 0

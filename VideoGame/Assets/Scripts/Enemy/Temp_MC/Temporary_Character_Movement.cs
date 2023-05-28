@@ -4,14 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[Flags]
-public enum Directions // Flags public to be used by other scripts
-{
-    Right = 1,
-    Left = 2,
-    Up = 4,
-    Down = 8
-}
+
 
 public class Temporary_Character_Movement : MonoBehaviour
 {
