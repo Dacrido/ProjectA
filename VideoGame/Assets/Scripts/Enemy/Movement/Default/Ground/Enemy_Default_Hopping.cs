@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Default_Hopping : MonoBehaviour
+public class Enemy_Default_Hopping : MonoBehaviour // Maybe extend from general class? *************************
 {
 
     private Rigidbody2D rb;
