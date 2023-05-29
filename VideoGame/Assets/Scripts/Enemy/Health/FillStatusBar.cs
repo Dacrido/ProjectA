@@ -16,7 +16,6 @@ public class FillStatusBar : MonoBehaviour
         slider = GetComponent<Slider>(); // Getting the slider component the script is attached to
     }
 
-    // Update is called once per frame
     public void UpdateHealthBar()
     {
         if (slider.value <= slider.minValue) // To remove the little remaining bit of the bar

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy_General_Movement_Ground : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
     LayerMask groundLayer;
     LayerMask playerLayer;
     private BoxCollider2D boxCollider;
+    [SerializeField] private Slider HealthBar;
     
     int enemyLayer;
 
@@ -27,11 +29,15 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
         groundLayer = LayerMask.GetMask("Ground");
         playerLayer = LayerMask.GetMask("Player");
 
-        boxCollider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();        
 
         switch (Random.Range(1, 3))
         {
-            case 1: direction = 1; break;
+            case 1: direction = 1;
+                Vector3 localScale = transform.localScale;
+                localScale.x *= -1;
+                transform.localScale = localScale;
+                break;
             case 2: direction = -1; break;
         }
 
@@ -92,6 +98,17 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
     public void Flip() // Must be updated to physically flip the enemy, as well as not flip the health bar
     {
         direction *= -1;
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
+
+        if (HealthBar.direction == Slider.Direction.LeftToRight) // Stupid solution, but works
+        {
+            HealthBar.direction = Slider.Direction.RightToLeft;
+        } else
+        {
+            HealthBar.direction = Slider.Direction.LeftToRight;
+        }
     }
 
     public void DefaultReaction(float extra = 0.0f) // Default movement reaction for enemies 

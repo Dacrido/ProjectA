@@ -206,7 +206,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &141288166
 MonoBehaviour:
@@ -288,7 +288,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &777532978
 GameObject:
@@ -1943,7 +1943,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8437555812737619197, guid: 9b992a545640c1748adfd60574ee79f9, type: 3}
   m_PrefabInstance: {fileID: 2576920182161125530}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1400652586
+--- !u!1001 &849773127
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -1964,11 +1964,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 29.223734
+      value: 15.080102
       objectReference: {fileID: 0}
     - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -10.067114
+      value: -4.9014845
       objectReference: {fileID: 0}
     - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2005,6 +2005,71 @@ PrefabInstance:
     - target: {fileID: 5074526944868502649, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
       propertyPath: m_Name
       value: Flying Bouncer (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+--- !u!1001 &1076346876
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5074526943950500633, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526943950500633, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.39983094
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -6.4651136
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502643, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5074526944868502649, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
+      propertyPath: m_Name
+      value: Flying Bouncer
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 549346c28056e5b4aad389c5892a8404, type: 3}
@@ -2051,7 +2116,7 @@ Transform:
   m_Children:
   - {fileID: 777532979}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2576920182161125530
 PrefabInstance:
