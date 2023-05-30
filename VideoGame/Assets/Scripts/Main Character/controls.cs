@@ -29,13 +29,15 @@ public class controls : MonoBehaviour
     private float cayoteTimeCounter;
     private float jumpBufferTime = 0.15f;
     private float jumpBufferCounter;
+    private float dashDown = -15f;
 
     // dash
     private bool canDash = true;
     public bool isDashing;
-    private float dashPower = 20f;
+    private float dashPower = 18.5f;
     private float dashTime = 0.2f;
     private float dashCooldown = 0.6f;
+
 
     
 
@@ -98,7 +100,7 @@ public class controls : MonoBehaviour
             jumpBufferCounter = 0f;
            
         }
-
+        // DOUBLE JUMP
         else if (Input.GetButtonDown("Jump") && canDoubleJump) // if jump is pressed and the player is not on the platform
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce-1f); // // accelerate the y velocity, i.e jump
@@ -112,7 +114,11 @@ public class controls : MonoBehaviour
             cayoteTimeCounter = 0f;
         }
         
-        // DOUBLE JUMP
+        if ((Input.GetKeyDown(KeyCode.S) || (Input.GetKeyDown(KeyCode.DownArrow) )) && !IsGround())
+        {
+            rb.velocity = new Vector2(rb.velocity.x, dashDown);
+            
+        }
            
         
         

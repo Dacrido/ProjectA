@@ -259,7 +259,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 20
-  damage: 20
+  damage: 1
+  maxDistance: 30
   rb: {fileID: 5022851818448755713}
   impact: {fileID: 0}
   player: {fileID: 110981985655310644, guid: 92c9d4c83c45dd245b2a4439a098c545, type: 3}
+  big_arrow: 0

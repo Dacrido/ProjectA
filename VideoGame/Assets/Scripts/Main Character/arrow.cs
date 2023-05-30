@@ -5,7 +5,7 @@ using UnityEngine;
 public class arrow : MonoBehaviour
 {
     public float speed = 20f;
-    public float damage = 20f;
+    public int damage = 20;
     public float maxDistance = 30f;
 
 
@@ -16,7 +16,7 @@ public class arrow : MonoBehaviour
     public bool big_arrow = false; 
 
     private controls other;
-
+    private Health health;
 
     private int ammo;
 
@@ -45,20 +45,29 @@ public class arrow : MonoBehaviour
     }
 
     
-    void Damage()
-    {
-        
-    }
 
-    void OnCollisionEnter2D(Collision2D other)
+    void OnCollisionEnter2D(Collision2D otherObj)
     {
-        if (other.gameObject.tag == "Enemy")
+        if (otherObj.gameObject.tag == "Map"){
+            Destroy(gameObject);
+        }
+        
+        if (otherObj.gameObject.tag == "Enemy")
         {
-            if (!big_arrow) Destroy(gameObject);                    
-            Destroy(other.gameObject);
+            health = otherObj.gameObject.GetComponent<Health>();
+            
+            if (big_arrow)
+            {
+                health.takeDamage(damage);
+                return;
+            }
+            Destroy(gameObject);
+            health.takeDamage(damage);
+
         }
 
-        //Physics.IgnoreLayerCollision(0, 3);
+        
+
         
 
     }
