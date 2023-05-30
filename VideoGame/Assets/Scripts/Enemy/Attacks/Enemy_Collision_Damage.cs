@@ -9,8 +9,8 @@ public class Enemy_Collision_Damage : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-            Player_Health health = collision.gameObject.GetComponent<Player_Health>();
-            health.takeDamage(damage);
+            player_health playerHealth = collision.gameObject.GetComponent<player_health>();
+            playerHealth.takeDamage(damage);
         }
     }
 }

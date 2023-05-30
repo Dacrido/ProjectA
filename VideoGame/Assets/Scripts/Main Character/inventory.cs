@@ -43,7 +43,7 @@ public class inventory : MonoBehaviour
         }
     }
 
-    void dropOff(Collider2D weapon) // dropping the weapon
+    public void dropOff(Collider2D weapon) // dropping the weapon
     {       
         weapon.isTrigger = false; // turn on collision again
         Rigidbody2D rb = weapon.gameObject.GetComponent<Rigidbody2D>(); // get the weapons rigid body
