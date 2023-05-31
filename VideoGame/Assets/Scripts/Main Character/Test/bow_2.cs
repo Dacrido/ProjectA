@@ -9,6 +9,9 @@ public class bow_2 : MonoBehaviour
     private float nextAttackTime = 0f; 
     private float attackRate = 2f;
 
+    private float charge_time = 0.7f;
+    private float time_counter;
+
     public Transform inventory;
 
     // Start is called before the first frame update
@@ -24,15 +27,14 @@ public class bow_2 : MonoBehaviour
         
         if (transform.IsChildOf(inventory))
         {
-            if (Time.time >= nextAttackTime) 
-            {                              
-                if (Input.GetKeyUp(KeyCode.F))
-                {
-                    Shoot();
-                    nextAttackTime = Time.time + 1f/attackRate;
-          
-                }
-            } 
+            if (Input.GetKey(KeyCode.F)){
+                time_counter+= Time.deltaTime;       
+            }
+
+            else if (Input.GetKeyUp(KeyCode.F)){
+                if (time_counter > charge_time) Shoot();
+                time_counter = 0;     
+            }
         }
     }
 
