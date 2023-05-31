@@ -16,7 +16,7 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
     LayerMask groundLayer;
     LayerMask playerLayer;
     private BoxCollider2D boxCollider;
-    [SerializeField] private Slider HealthBar;
+    //[SerializeField] private Slider HealthBar;
     
     int enemyLayer;
 
@@ -102,13 +102,13 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
         localScale.x *= -1;
         transform.localScale = localScale;
 
-        if (HealthBar.direction == Slider.Direction.LeftToRight) // Stupid solution, but works
+        /*if (HealthBar.direction == Slider.Direction.LeftToRight) // Stupid solution, but works
         {
             HealthBar.direction = Slider.Direction.RightToLeft;
         } else
         {
             HealthBar.direction = Slider.Direction.LeftToRight;
-        }
+        }*/
     }
 
     public void DefaultReaction(float extra = 0.0f) // Default movement reaction for enemies 
