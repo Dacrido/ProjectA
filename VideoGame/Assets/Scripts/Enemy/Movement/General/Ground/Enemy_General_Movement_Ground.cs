@@ -48,8 +48,8 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
     {
         // Getting position of downwards ray
         Vector2 ray_Position = transform.position;
-        ray_Position.x += direction * (boxCollider.offset.x + boxCollider.size.x / 2); // Places the x position to the front of the enemy depending on direction
-        ray_Position.y -= boxCollider.offset.y + boxCollider.size.y / 2;
+        ray_Position.x += boxCollider.offset.x + direction * (boxCollider.size.x / 2); // Places the x position to the front of the enemy depending on direction
+        ray_Position.y -= boxCollider.size.y / 2 - boxCollider.offset.y;
 
         // Direction and distance of downwards ray
         Vector2 ray_Direction = Vector2.down;
@@ -65,17 +65,19 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
     public bool isWalled()
     {
         Vector2 ray_Position = transform.position;
-        ray_Position.x += direction * (boxCollider.offset.x + boxCollider.size.x / 2);
+        ray_Position.x += boxCollider.offset.x + direction * (boxCollider.size.x / 2);
+        //ray_Position.y += boxCollider.offset.y;
 
         Vector2 ray_Direction = direction * Vector2.right;
         float ray_Distance = 0.05f;
 
-        Vector2 ray_Size = new Vector2(0.05f, boxCollider.size.y);
+        Vector2 ray_Size = new Vector2(0.4f, boxCollider.size.y);
 
         RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, ray_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
 
         if (checkForWall.collider != null)
             return true;
+        
         return false;
     }
 
@@ -101,14 +103,6 @@ public class Enemy_General_Movement_Ground : MonoBehaviour
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
-
-        /*if (HealthBar.direction == Slider.Direction.LeftToRight) // Stupid solution, but works
-        {
-            HealthBar.direction = Slider.Direction.RightToLeft;
-        } else
-        {
-            HealthBar.direction = Slider.Direction.LeftToRight;
-        }*/
     }
 
     public void DefaultReaction(float extra = 0.0f) // Default movement reaction for enemies 
