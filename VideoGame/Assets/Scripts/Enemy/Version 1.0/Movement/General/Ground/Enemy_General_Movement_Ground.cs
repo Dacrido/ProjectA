@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Enemy_General_Movement_Ground : MonoBehaviour
 {
 
+    // ****************** OLD CLASS NO LONGER USED
     // This class contains general methods used by all the ground movement scripts. Most notably, raycasts, boolean methods and flip()
 
     private float speed;
