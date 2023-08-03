@@ -16,7 +16,7 @@ public class arrow : MonoBehaviour
     public bool big_arrow = false; 
 
     private controls other;
-    private Health health;
+    private EnemyHealth health;
 
     private int ammo;
 
@@ -24,7 +24,7 @@ public class arrow : MonoBehaviour
     
     // Start is called before the first frame update
     void Awake(){
-        GameObject player = GameObject.Find("player_default");     
+        GameObject player = GameObject.Find("player_2");     
         other = player.GetComponent<controls>(); 
     }
     
@@ -39,9 +39,7 @@ public class arrow : MonoBehaviour
 
     void Update()
     {
-        if (time_counter> 2.5f) Destroy(gameObject);
-       
-        time_counter += Time.deltaTime;
+        
     }
 
     
@@ -54,7 +52,7 @@ public class arrow : MonoBehaviour
         
         if (otherObj.gameObject.tag == "Enemy")
         {
-            health = otherObj.gameObject.GetComponent<Health>();
+            health = otherObj.gameObject.GetComponent<EnemyHealth>();
             
             if (big_arrow)
             {
