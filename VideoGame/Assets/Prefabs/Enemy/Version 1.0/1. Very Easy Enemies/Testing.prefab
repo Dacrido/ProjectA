@@ -177,6 +177,8 @@ MonoBehaviour:
   idle: {fileID: 2565529196665595930}
   attackScripts: []
   chaseScript: {fileID: 0}
+  minChaseTime: 6
+  maxChaseTime: 8
   type: 0
 --- !u!114 &2565529196665595929
 MonoBehaviour:
@@ -206,6 +208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efbf0c3ef360c343887be11a657d54e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 4
 --- !u!114 &2565529196665595931
 MonoBehaviour:
   m_ObjectHideFlags: 0

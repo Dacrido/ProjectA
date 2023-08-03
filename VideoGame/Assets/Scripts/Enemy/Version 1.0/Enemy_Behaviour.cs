@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
+using System.Threading;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
@@ -25,11 +27,24 @@ public class Enemy_Behaviour : MonoBehaviour
     private enum State
     {
         Default, 
+        Idle,
         Chase, 
         Attack
     }
 
-    private State currentState;
+    private State _currentState;
+    private State currentState
+    {
+        get { return _currentState; }
+        set
+        {
+            if (_currentState != value)
+            {
+                _currentState = value;
+                OnStateChanged();
+            }
+        }
+    }
 
 
     // ************* SCRIPTS *************
@@ -37,10 +52,37 @@ public class Enemy_Behaviour : MonoBehaviour
     [SerializeField] private MonoBehaviour idle;
     [SerializeField] private MonoBehaviour[] attackScripts; // contact damage is always applied, so does not take part in this array
     [SerializeField] private MonoBehaviour chaseScript;
+    public float minChaseTime;
+    public float maxChaseTime;
 
     // When chasing is implemented, it will need the use of the latest movement script to 'chase' the player with that movement. All the chasing script affects is direction
-    private MonoBehaviour activeScript;
-    private IMovementScript currentMovement;
+
+    [Tooltip("Current movement script")] private IMovementScript currentMovement;
+    private float currentMinTime;
+    private float currentMaxTime;
+    [Tooltip("States: \n Default - timer to switch to idle state \n Idle - timer to switch to default state \n Chase - timer to switch back to default state")] private float timer;
+
+    private MonoBehaviour _activeScript;
+    [Tooltip("Which non-movement script is currently active. Null otherwise")] private MonoBehaviour activeScript
+    {
+        get { return _activeScript;  }
+        set {
+            if (_activeScript != value)
+            {
+                if (_activeScript != null)
+                    _activeScript.enabled = false;
+
+                _activeScript = value;
+
+                if (_activeScript != null)
+                    _activeScript.enabled = true;                        
+                
+                
+            }
+        }
+    }  
+    
+
 
     // ************* STATS **************
     public enum Type
@@ -65,7 +107,7 @@ public class Enemy_Behaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        activeScript = idle;
+        activeScript = null;
         disableScripts();
 
         groundLayer = LayerMask.GetMask("Ground");
@@ -77,6 +119,7 @@ public class Enemy_Behaviour : MonoBehaviour
         currentState = State.Default;
         chooseDirection();
         chooseMovementScript(); // Everything starts in 'default' state
+        OnStateChanged(); // Calls to start the whole script activation process
         
     }
 
@@ -84,17 +127,23 @@ public class Enemy_Behaviour : MonoBehaviour
     void Update()
     {
         switch (currentState)
-        {
+        {   // Default, Idle and Chase must always have seePlayer on, in order to chase the player
             case State.Default:
-                normalBehaviour(currentMovement.distanceFromGround());
+                defaultBehaviour(currentMovement.distanceFromGround());
+                break;
+            case State.Idle:
+                idleBehaviour();
                 break;
             case State.Chase:
+                chaseBehaviour();
                 break;
             case State.Attack:
+                attackBehaviour();
                 break;
         }
     }
 
+    // ******************************************************************** SCRIPTS *********************************************************************
     void disableScripts()
     {
         foreach (MonoBehaviour script in movementScripts)
@@ -104,6 +153,45 @@ public class Enemy_Behaviour : MonoBehaviour
             //script.enabled = false;
         //chaseScript.enabled = false;
 
+    }
+
+    void OnStateChanged()
+    {
+
+        timer = 0f;
+
+        switch (currentState)
+        {
+            case State.Default:
+
+                (currentMovement as MonoBehaviour).enabled = false;
+                chooseMovementScript();
+
+                activeScript = null;
+                (currentMovement as MonoBehaviour).enabled = true;
+
+                currentMinTime = currentMovement.minTime;
+                currentMaxTime = currentMovement.maxTime;
+
+                break;
+            case State.Idle:
+                activeScript = idle;
+                (currentMovement as MonoBehaviour).enabled = false;
+                currentMinTime = (idle as IMovementScript).minTime;
+                currentMaxTime = (idle as IMovementScript).maxTime;
+                break;
+            case State.Chase:                
+                activeScript = chaseScript;
+                (currentMovement as MonoBehaviour).enabled = true;
+                currentMinTime = minChaseTime;
+                currentMaxTime = maxChaseTime;
+                break;
+            case State.Attack:
+                //chooseAttackScript();
+                (currentMovement as MonoBehaviour).enabled = false;
+                break;
+
+        }
     }
 
     /*
@@ -118,8 +206,7 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         if (movementScripts.Length == 1)
         {
-            activeScript = (MonoBehaviour)movementScripts[0];
-            activeScript.enabled = true;
+            currentMovement = (IMovementScript) movementScripts[0];
             return;
         }
 
@@ -141,12 +228,58 @@ public class Enemy_Behaviour : MonoBehaviour
         int randomIndex = Random.Range(0, possibilities.Count);
         IMovementScript chosen = possibilities[randomIndex];
 
-        activeScript.enabled = false;
-        activeScript = (MonoBehaviour) chosen;
-        activeScript.enabled = true;
         currentMovement = chosen;
     }
 
+    void chooseAttackScript()
+    {
+
+    }
+    private void defaultBehaviour(float extra = 0.0f)
+    {
+
+        timer += Time.deltaTime;
+        float chance = (timer - currentMinTime) / (currentMaxTime - currentMinTime);
+        if (Random.value < chance)
+        {
+            currentState = State.Idle;
+        }
+
+        if (!isGrounded(extra) || isWalled())
+        {
+            Flip();
+        }
+        
+    }
+
+    private void idleBehaviour()
+    {
+        timer += Time.deltaTime;
+        float chance = (timer - currentMinTime) / (currentMaxTime - currentMinTime);
+        if (Random.value < chance)
+        {
+            currentState = State.Default;            
+        }
+    }
+
+    private void chaseBehaviour()
+    {
+        if (seePlayer()) // resets to 0 if sees the player
+            timer = 0f;
+        timer += Time.deltaTime;
+        float chance = (timer - currentMinTime) / (currentMaxTime - currentMinTime);
+        if (Random.value < chance)
+        {
+            currentState = State.Default;
+        }
+    }
+
+    private void attackBehaviour()
+    {
+        
+    }
+    
+    // ************************************************************************************ STATS ****************************************************************************
     void chooseDirection()
     {   
         switch (type)
@@ -157,8 +290,7 @@ public class Enemy_Behaviour : MonoBehaviour
             case Type.Flying: // any direction
                 direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized; 
                 break;
-            case Type.Mix: // must first determine whether in ground state or flying state via active movement 
-                
+            case Type.Mix: // must first determine whether in ground state or flying state via active movement                 
                 break;
         }
     }
@@ -230,63 +362,6 @@ public class Enemy_Behaviour : MonoBehaviour
         localScale.x *= -1;
         transform.localScale = localScale;
     }
-
-    private void normalBehaviour(float extra = 0.0f)
-    {
-        if (!isGrounded(extra) || isWalled())
-        {
-            Flip();
-        }
-    }
-
-    private void chasingBehaviour()
-    {
-
-    }
-    
-    private void attackBehaviour()
-    {
-
-    }
-
-
-
-
-    //// ********************************** WORK ON
-    ///
-    /*public float minTime = 0f;
-    public float maxTime = 1f;
-    public float probabilityAtMinTime = 0f;
-    public float probabilityAtMaxTime = 1f;
-
-    private bool myBool = false;
-
-    private IEnumerator Start()
-    {
-        while (true)
-        {
-            float t = 0f;
-
-            while (t < maxTime)
-            {
-                t += Time.deltaTime;
-
-                if (t >= minTime && !myBool)
-                {
-                    float probability = Mathf.InverseLerp(minTime, maxTime, t);
-                    if (Random.value < probability)
-                    {
-                        myBool = true;
-                        yield return new WaitForSeconds(1f);
-                        myBool = false;
-                        break;
-                    }
-                }
-
-                yield return null;
-            }
-        }
-    }*/
 
 
 }
