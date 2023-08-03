@@ -254,7 +254,7 @@ public class Enemy_Behaviour : MonoBehaviour
 
     //// ********************************** WORK ON
     ///
-    public float minTime = 0f;
+    /*public float minTime = 0f;
     public float maxTime = 1f;
     public float probabilityAtMinTime = 0f;
     public float probabilityAtMaxTime = 1f;
@@ -286,7 +286,7 @@ public class Enemy_Behaviour : MonoBehaviour
                 yield return null;
             }
         }
-    }
+    }*/
 
 
 }
