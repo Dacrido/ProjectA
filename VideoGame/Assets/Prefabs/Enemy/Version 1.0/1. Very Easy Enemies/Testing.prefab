@@ -222,7 +222,7 @@ MonoBehaviour:
   _maxTime: 15
   _canRepeat: 1
   speed: 4
-  jumpPower: 5
+  jumpPower: 4
 --- !u!114 &2565529196665595938
 MonoBehaviour:
   m_ObjectHideFlags: 0
