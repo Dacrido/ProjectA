@@ -5,10 +5,9 @@ using UnityEngine;
 public class shoot : MonoBehaviour
 {
     private float arrow_speed = 30f;
+    public GameObject default_arrow;
+    public GameObject equipped_arrow;
 
-    private GameObject arrow;
-
-    public itemInventory items;
 
     public Animator animator;
 
@@ -26,8 +25,10 @@ public class shoot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (arrow == null) return;
-
+        if (equipped_arrow == null) 
+        {
+            equipped_arrow = default_arrow;
+        }
         
         
 
@@ -46,7 +47,7 @@ public class shoot : MonoBehaviour
 
     public void Shoot()
     {
-        if (attackpoint != null) Instantiate(arrow, attackpoint.position, attackpoint.rotation);
+        if (attackpoint != null) Instantiate(equipped_arrow, attackpoint.position, attackpoint.rotation);
     
         Debug.Log("attacked");
     } 

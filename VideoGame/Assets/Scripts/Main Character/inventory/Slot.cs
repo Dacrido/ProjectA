@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour
 {
+    private GameObject player;
+    private shoot shootScript;
     private itemInventory inventory;
     public int i;
     private void Start()
     {
-        inventory = GameObject.FindGameObjectWithTag("Player").GetComponent<itemInventory>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        inventory = player.GetComponent<itemInventory>();
+        shootScript = player.GetComponent<shoot>();
+    
     }
 
     private void Update()
@@ -23,6 +28,8 @@ public class Slot : MonoBehaviour
         foreach (Transform child in transform)
         {
             child.GetComponent<Spawn>().SpawnDroppedItem();
+            if (child.gameObject.tag == "Arrow") shootScript.equipped_arrow = shootScript.default_arrow;
+
             GameObject.Destroy(child.gameObject);
         }
     }

@@ -10,6 +10,7 @@ TagManager:
   - Enemy Projectile
   - Map
   - Ladder
+  - Arrow
   layers:
   - Default
   - TransparentFX
