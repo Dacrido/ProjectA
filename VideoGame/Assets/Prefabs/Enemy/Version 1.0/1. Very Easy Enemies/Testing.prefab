@@ -177,8 +177,6 @@ MonoBehaviour:
   idle: {fileID: 2565529196665595930}
   attackScripts: []
   chaseScript: {fileID: 0}
-  minChaseTime: 6
-  maxChaseTime: 8
   type: 0
 --- !u!114 &2565529196665595929
 MonoBehaviour:
@@ -226,7 +224,7 @@ MonoBehaviour:
   _maxTime: 15
   _canRepeat: 1
   speed: 4
-  jumpPower: 5
+  jumpPower: 4
 --- !u!114 &2565529196665595938
 MonoBehaviour:
   m_ObjectHideFlags: 0

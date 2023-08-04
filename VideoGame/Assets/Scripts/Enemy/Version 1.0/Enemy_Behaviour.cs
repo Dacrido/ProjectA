@@ -23,6 +23,12 @@ using Random = UnityEngine.Random;
  */
 public class Enemy_Behaviour : MonoBehaviour
 {
+
+    // ************* GENERAL *************
+
+    System.Random random;
+
+
     // ************* STATES *************
     private enum State
     {
@@ -52,14 +58,14 @@ public class Enemy_Behaviour : MonoBehaviour
     [SerializeField] private MonoBehaviour idle;
     [SerializeField] private MonoBehaviour[] attackScripts; // contact damage is always applied, so does not take part in this array
     [SerializeField] private MonoBehaviour chaseScript;
-    public float minChaseTime;
-    public float maxChaseTime;
 
     // When chasing is implemented, it will need the use of the latest movement script to 'chase' the player with that movement. All the chasing script affects is direction
 
     [Tooltip("Current movement script")] private IMovementScript currentMovement;
+
     private float currentMinTime;
     private float currentMaxTime;
+    private float chosenTime;
     [Tooltip("States: \n Default - timer to switch to idle state \n Idle - timer to switch to default state \n Chase - timer to switch back to default state")] private float timer;
 
     private MonoBehaviour _activeScript;
@@ -94,7 +100,6 @@ public class Enemy_Behaviour : MonoBehaviour
 
     public Type type;
     private Vector2 direction; // Either left/right/up/down. Up and down only possible in certain conditions such as using a ladder to chase the player upwards
-    private float distanceFromGround; // only for ground enemies
 
     private BoxCollider2D boxCollider;
 
@@ -115,6 +120,12 @@ public class Enemy_Behaviour : MonoBehaviour
 
         boxCollider = GetComponent<BoxCollider2D>();
 
+        // Big problem with random is that all instances of random in all of the enemies are using the same seed. With the same seed, the same set of numbers occur
+        // To fix this, we need a separate seed per script instance, and do this by setting the seed of random to a unique value based on the current time and the instance ID of the script
+        random = new System.Random(DateTime.Now.Millisecond + GetInstanceID());
+
+
+
 
         currentState = State.Default;
         chooseDirection();
@@ -126,6 +137,7 @@ public class Enemy_Behaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        timer += Time.deltaTime;
         switch (currentState)
         {   // Default, Idle and Chase must always have seePlayer on, in order to chase the player
             case State.Default:
@@ -142,6 +154,8 @@ public class Enemy_Behaviour : MonoBehaviour
                 break;
         }
     }
+
+
 
     // ******************************************************************** SCRIPTS *********************************************************************
     void disableScripts()
@@ -183,8 +197,8 @@ public class Enemy_Behaviour : MonoBehaviour
             case State.Chase:                
                 activeScript = chaseScript;
                 (currentMovement as MonoBehaviour).enabled = true;
-                currentMinTime = minChaseTime;
-                currentMaxTime = maxChaseTime;
+                //currentMinTime = minChaseTime;
+                //currentMaxTime = maxChaseTime;
                 break;
             case State.Attack:
                 //chooseAttackScript();
@@ -192,6 +206,14 @@ public class Enemy_Behaviour : MonoBehaviour
                 break;
 
         }
+
+        float skewness = (currentMaxTime - currentMinTime) / 2;
+        if (random.NextDouble() > 0.35d)
+            currentMinTime = skewness;
+        else
+            currentMaxTime = skewness;
+        chosenTime = (float) random.NextDouble() * (currentMaxTime - currentMinTime) + currentMinTime;
+        print(chosenTime);
     }
 
     /*
@@ -237,13 +259,8 @@ public class Enemy_Behaviour : MonoBehaviour
     }
     private void defaultBehaviour(float extra = 0.0f)
     {
-
-        timer += Time.deltaTime;
-        float chance = (timer - currentMinTime) / (currentMaxTime - currentMinTime);
-        if (Random.value < chance)
-        {
+        if (isGrounded() && timeTillChangeState())
             currentState = State.Idle;
-        }
 
         if (!isGrounded(extra) || isWalled())
         {
@@ -254,31 +271,37 @@ public class Enemy_Behaviour : MonoBehaviour
 
     private void idleBehaviour()
     {
-        timer += Time.deltaTime;
-        float chance = (timer - currentMinTime) / (currentMaxTime - currentMinTime);
-        if (Random.value < chance)
-        {
-            currentState = State.Default;            
-        }
+        if (timeTillChangeState())
+            currentState = State.Default;
     }
 
     private void chaseBehaviour()
-    {
+    {   
+
         if (seePlayer()) // resets to 0 if sees the player
             timer = 0f;
-        timer += Time.deltaTime;
-        float chance = (timer - currentMinTime) / (currentMaxTime - currentMinTime);
-        if (Random.value < chance)
-        {
+
+        if (timeTillChangeState())
             currentState = State.Default;
-        }
+        
     }
 
     private void attackBehaviour()
     {
         
     }
-    
+
+
+
+    private bool timeTillChangeState()
+    {   
+        if (timer >= chosenTime)
+        {
+            return true;
+        }
+        return false;
+    }
+
     // ************************************************************************************ STATS ****************************************************************************
     void chooseDirection()
     {   

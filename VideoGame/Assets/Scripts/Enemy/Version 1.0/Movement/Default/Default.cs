@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy_Default_Hopping : MonoBehaviour, IMovementScript 
-{
 
+// Starter structure for all movement scripts
+
+public class Default : MonoBehaviour, IMovementScript
+{
 
     // Public Conditions (required among all movement scripts)
 
@@ -44,12 +46,14 @@ public class Enemy_Default_Hopping : MonoBehaviour, IMovementScript
     private Enemy_Behaviour General;
 
     [SerializeField] private float speed;
-    [SerializeField] private float jumpPower;
-    private float startingHeight; // starting height before the jump
+
 
     // Start is called before the first frame update
     void Start()
     {
+        needsLadder = false;
+        isFlying = false;
+
         rb = GetComponent<Rigidbody2D>();
         General = GetComponent<Enemy_Behaviour>();
     }
@@ -64,25 +68,10 @@ public class Enemy_Default_Hopping : MonoBehaviour, IMovementScript
     void Update()
     {
         
-        if (General.isGrounded())
-        {
-            Jump();
-        }
-    }
-
-    void FixedUpdate()
-    {
-        rb.velocity = new Vector2(General.getDirection().x * speed, rb.velocity.y);
-    }
-
-    private void Jump()
-    {   
-        startingHeight = transform.position.y;
-        rb.velocity = new Vector2(rb.velocity.x, jumpPower);
     }
 
     public float distanceFromGround()
     {
-        return transform.position.y - startingHeight;
+        return 0f;
     }
 }

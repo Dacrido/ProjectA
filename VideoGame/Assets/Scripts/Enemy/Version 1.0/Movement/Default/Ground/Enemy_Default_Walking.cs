@@ -55,8 +55,13 @@ public class Enemy_Default_Walking : MonoBehaviour, IMovementScript // Maybe ext
 
         rb = GetComponent<Rigidbody2D>();
         General = GetComponent<Enemy_Behaviour>();
+    }
 
-    }    
+    private void OnEnable()
+    {   
+        if (rb != null)
+            rb.gravityScale = 1;
+    }
 
     void FixedUpdate()
     {

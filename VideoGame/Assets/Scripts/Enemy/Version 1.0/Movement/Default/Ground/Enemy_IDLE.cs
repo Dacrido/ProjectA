@@ -5,8 +5,6 @@ using UnityEngine;
 public class Enemy_IDLE : MonoBehaviour, IMovementScript
 {
 
-    private Rigidbody2D rb;
-
     [SerializeField]
     private float _minTime;
     public float minTime
@@ -35,10 +33,18 @@ public class Enemy_IDLE : MonoBehaviour, IMovementScript
     }
 
 
+    private Rigidbody2D rb;
+
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();        
+    }
+
+    private void OnEnable()
+    {
+        if (rb != null)
+            rb.gravityScale = 0;
     }
 
     // Update is called once per frame
