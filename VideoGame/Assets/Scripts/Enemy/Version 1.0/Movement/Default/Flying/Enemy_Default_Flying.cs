@@ -43,6 +43,7 @@ public class Enemy_Default_Flying : MonoBehaviour, IMovementScript
 
     [SerializeField] private float speed;
 
+    private int counter = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +59,8 @@ public class Enemy_Default_Flying : MonoBehaviour, IMovementScript
     {
         if (rb != null)
             rb.gravityScale = 1;
+
+        counter = 0;
     }
 
     void FixedUpdate()
@@ -66,14 +69,24 @@ public class Enemy_Default_Flying : MonoBehaviour, IMovementScript
     }
 
     // For some reason, onCollisions still run even if the script itself is disabled ****************************************
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision) // Stay not Enter as if enemy is in idle and colliding, enter isnt called in this script
     {
         if (!enabled)
             return;
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+
+        if (counter == 0)
         {
-            CalculateDirection(collision.contacts[0].normal);
+            if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                CalculateDirection(collision.contacts[0].normal);
+            }
         }
+
+        counter++;
+
+        if (counter >= 3)
+            counter = 0;
+        
     }
 
     void CalculateDirection(Vector2 collisionDirection)
