@@ -159,13 +159,14 @@ public class controls : MonoBehaviour
         
         if (horizontal != 0){
             time_counter += Time.deltaTime;
-
+            
             if (currentSpeed < maxSpeed) 
             {
                 currentSpeed = acceleration_rate * time_counter;
             } else time_counter = 0;
             
             rb.velocity = new Vector2(currentSpeed * horizontal, rb.velocity.y);
+            
         }
 
         else if (horizontal == 0) 
@@ -182,7 +183,7 @@ public class controls : MonoBehaviour
         }
           
 
-        
+        anim.SetFloat("speed", Mathf.Abs(horizontal));
                
 
     }
