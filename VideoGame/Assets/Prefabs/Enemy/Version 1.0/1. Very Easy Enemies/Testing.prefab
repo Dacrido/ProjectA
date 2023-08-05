@@ -14,7 +14,9 @@ GameObject:
   - component: {fileID: 2565529196665595934}
   - component: {fileID: 2565529196665595935}
   - component: {fileID: 2565529196665595928}
+  - component: {fileID: 2565529196665595929}
   - component: {fileID: 2565529196665595930}
+  - component: {fileID: 2565529196665595931}
   - component: {fileID: 2565529196665595938}
   - component: {fileID: -259789290369102588}
   m_Layer: 7
@@ -171,10 +173,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementScripts:
+  - {fileID: 2565529196665595929}
+  - {fileID: 2565529196665595931}
   - {fileID: -259789290369102588}
   idle: {fileID: 2565529196665595930}
   attackScripts: []
   chaseScript: {fileID: 0}
+--- !u!114 &2565529196665595929
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565529196665595924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69ce7ad32647e5f428b04104090742b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 20
+  _canRepeat: 1
+  speed: 3
 --- !u!114 &2565529196665595930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +209,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minTime: 2
   _maxTime: 4
+--- !u!114 &2565529196665595931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565529196665595924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4382548f59ccbf4890f4c058af26caf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 15
+  _canRepeat: 1
+  speed: 4
+  jumpPower: 4
 --- !u!114 &2565529196665595938
 MonoBehaviour:
   m_ObjectHideFlags: 0

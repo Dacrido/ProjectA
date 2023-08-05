@@ -65,8 +65,11 @@ public class Enemy_Default_Flying : MonoBehaviour, IMovementScript
         rb.velocity = General.getDirection() * speed;
     }
 
+    // For some reason, onCollisions still run even if the script itself is disabled ****************************************
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!enabled)
+            return;
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             CalculateDirection(collision.contacts[0].normal);
