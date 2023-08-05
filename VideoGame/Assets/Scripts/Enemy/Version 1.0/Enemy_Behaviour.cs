@@ -94,11 +94,10 @@ public class Enemy_Behaviour : MonoBehaviour
     public enum Type
     {
         Ground,
-        Flying, 
-        Mix
+        Flying
     }
 
-    public Type type;
+    private Type currentType;
     private Vector2 direction; // Either left/right/up/down. Up and down only possible in certain conditions such as using a ladder to chase the player upwards
 
     private BoxCollider2D boxCollider;
@@ -127,9 +126,7 @@ public class Enemy_Behaviour : MonoBehaviour
 
 
 
-        currentState = State.Default;
-        chooseDirection();
-        chooseMovementScript(); // Everything starts in 'default' state
+        currentState = State.Default; 
         OnStateChanged(); // Calls to start the whole script activation process
         
     }
@@ -171,16 +168,17 @@ public class Enemy_Behaviour : MonoBehaviour
 
     void OnStateChanged()
     {
-
+        
         timer = 0f;
 
         switch (currentState)
         {
             case State.Default:
 
-                (currentMovement as MonoBehaviour).enabled = false;
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = false;
                 chooseMovementScript();
-
+                chooseDirection();
                 activeScript = null;
                 (currentMovement as MonoBehaviour).enabled = true;
 
@@ -205,6 +203,7 @@ public class Enemy_Behaviour : MonoBehaviour
                 (currentMovement as MonoBehaviour).enabled = false;
                 break;
 
+
         }
 
         float skewness = (currentMaxTime - currentMinTime) / 2;
@@ -213,7 +212,7 @@ public class Enemy_Behaviour : MonoBehaviour
         else
             currentMaxTime = skewness;
         chosenTime = (float) random.NextDouble() * (currentMaxTime - currentMinTime) + currentMinTime;
-        print(chosenTime);
+
     }
 
     /*
@@ -229,6 +228,11 @@ public class Enemy_Behaviour : MonoBehaviour
         if (movementScripts.Length == 1)
         {
             currentMovement = (IMovementScript) movementScripts[0];
+            switch (currentMovement.isFlying)
+            {
+                case true: currentType = Type.Flying; break;
+                case false: currentType = Type.Ground; break;
+            }
             return;
         }
 
@@ -237,6 +241,11 @@ public class Enemy_Behaviour : MonoBehaviour
         // only canRepeat is a condition that can remove the possibility of a script being chosen. 
         foreach (IMovementScript script in movementScripts)
         {
+            if (currentMovement == null)
+            {
+                possibilities.Add(script);
+                continue;
+            }
 
             if (script.canRepeat)
             {
@@ -249,6 +258,11 @@ public class Enemy_Behaviour : MonoBehaviour
         }
         int randomIndex = Random.Range(0, possibilities.Count);
         IMovementScript chosen = possibilities[randomIndex];
+        switch (chosen.isFlying)
+        {
+            case true: currentType = Type.Flying; break;
+            case false: currentType = Type.Ground; break;
+        }
 
         currentMovement = chosen;
     }
@@ -259,13 +273,26 @@ public class Enemy_Behaviour : MonoBehaviour
     }
     private void defaultBehaviour(float extra = 0.0f)
     {
-        if (isGrounded() && timeTillChangeState())
-            currentState = State.Idle;
-
-        if (!isGrounded(extra) || isWalled())
+        switch (currentType)
         {
-            Flip();
+            case Type.Ground:
+                if (isGrounded() && timeTillChangeState())
+                    currentState = State.Idle;
+
+                if (!isGrounded(extra) || isWalled())
+                {
+                    Flip();
+                }
+                break;
+
+            case Type.Flying:
+                if (isGrounded() && timeTillChangeState())
+                    currentState = State.Idle;
+
+                break;
         }
+        
+        
         
     }
 
@@ -282,7 +309,7 @@ public class Enemy_Behaviour : MonoBehaviour
             timer = 0f;
 
         if (timeTillChangeState())
-            currentState = State.Default;
+            currentState = State.Idle;
         
     }
 
@@ -304,16 +331,15 @@ public class Enemy_Behaviour : MonoBehaviour
 
     // ************************************************************************************ STATS ****************************************************************************
     void chooseDirection()
-    {   
-        switch (type)
+    {
+
+        switch (currentType)
         {
             case Type.Ground: // direction either left or right. Up/down only possible for those who can climb ladders, and only when next to a ladder. 
                 direction = new Vector2(Random.Range(-1f, 1f), 0f).normalized;
                 break;
             case Type.Flying: // any direction
                 direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized; 
-                break;
-            case Type.Mix: // must first determine whether in ground state or flying state via active movement                 
                 break;
         }
     }
@@ -322,6 +348,13 @@ public class Enemy_Behaviour : MonoBehaviour
     public Vector2 getDirection()
     {
         return direction;
+    }
+
+    public void setDirection(Vector2 direction)
+    {
+        if (this.direction.x == direction.x * -1)
+            Flip();
+        this.direction = direction;
     }
 
     // extraRayDistance: extra distance added to the ray say if the enemy is jumping off the ground
@@ -380,7 +413,13 @@ public class Enemy_Behaviour : MonoBehaviour
 
     public void Flip() // Must be updated to physically flip the enemy, as well as not flip the health bar
     {
-        direction *= -1;
+
+        switch (currentType)
+        {
+            case Type.Ground:
+                direction.x *= -1;
+                break;
+        }
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
