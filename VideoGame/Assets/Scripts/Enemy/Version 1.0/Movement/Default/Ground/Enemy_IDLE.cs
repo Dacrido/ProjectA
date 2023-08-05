@@ -4,22 +4,9 @@ using UnityEngine;
 
 public class Enemy_IDLE : MonoBehaviour, IMovementScript
 {
+    public float minTime => throw new System.NotImplementedException();
 
-    [SerializeField]
-    private float _minTime;
-    public float minTime
-    {
-        get { return _minTime; }
-        set { _minTime = value; }
-    }
-
-    [SerializeField]
-    private float _maxTime;
-    public float maxTime
-    {
-        get { return _maxTime; }
-        set { _maxTime = value; }
-    }
+    public float maxTime => throw new System.NotImplementedException();
 
     public bool canRepeat => throw new System.NotImplementedException();
 
@@ -29,27 +16,18 @@ public class Enemy_IDLE : MonoBehaviour, IMovementScript
 
     public float distanceFromGround()
     {
-        throw new System.NotImplementedException();
+        return 0f;
     }
-
-
-    private Rigidbody2D rb;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();        
-    }
-
-    private void OnEnable()
-    {
-        if (rb != null)
-            rb.gravityScale = 0;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        rb.velocity = Vector2.zero;
+        
     }
 }

@@ -18,7 +18,6 @@ GameObject:
   - component: {fileID: 2565529196665595930}
   - component: {fileID: 2565529196665595931}
   - component: {fileID: 2565529196665595938}
-  - component: {fileID: -259789290369102588}
   m_Layer: 7
   m_Name: Testing
   m_TagString: Enemy
@@ -175,10 +174,10 @@ MonoBehaviour:
   movementScripts:
   - {fileID: 2565529196665595929}
   - {fileID: 2565529196665595931}
-  - {fileID: -259789290369102588}
   idle: {fileID: 2565529196665595930}
   attackScripts: []
   chaseScript: {fileID: 0}
+  type: 0
 --- !u!114 &2565529196665595929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,8 +206,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efbf0c3ef360c343887be11a657d54e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minTime: 2
-  _maxTime: 4
 --- !u!114 &2565529196665595931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,7 +222,7 @@ MonoBehaviour:
   _maxTime: 15
   _canRepeat: 1
   speed: 4
-  jumpPower: 4
+  jumpPower: 5
 --- !u!114 &2565529196665595938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,19 +236,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
---- !u!114 &-259789290369102588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2565529196665595924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bec962b325822fd40b081fd7afe4052f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _minTime: 2
-  _maxTime: 16
-  _canRepeat: 0
-  speed: 3
