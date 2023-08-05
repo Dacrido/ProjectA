@@ -8,7 +8,7 @@ public class arrow : MonoBehaviour
     public int damage = 20;
     public float maxDistance = 30f;
 
-
+    public float maxHeight;
     public Rigidbody2D rb;
     public GameObject impact;
     public GameObject player;
@@ -21,20 +21,26 @@ public class arrow : MonoBehaviour
     private int ammo;
 
     private float time_counter;
-    
+    private int direction;
+
+    private float x_velocity;
+    private float yposition;
     // Start is called before the first frame update
     void Awake(){
-        GameObject player = GameObject.Find("player_2");     
+        player =  GameObject.FindGameObjectWithTag("Player");
+
         other = player.GetComponent<controls>(); 
+
     }
     
     void Start()
     {
 
-        if (other.isFacingRight) rb.velocity = new Vector2(speed, rb.velocity.y);
+        if (other.isFacingRight) direction = 1;
 
-        else if (!other.isFacingRight) rb.velocity = new Vector2(-speed, rb.velocity.y);
+        else if (!other.isFacingRight) direction = -1;
 
+        maxHeight = transform.position.y;
     }
 
     void Update()
@@ -42,7 +48,15 @@ public class arrow : MonoBehaviour
         
     }
 
-    
+    private void FixedUpdate() {
+        x_velocity = speed * direction;
+        
+        rb.velocity = new Vector2(x_velocity, x_velocity*0.08f); 
+        Debug.Log(transform.position.y);
+        Debug.Log(rb.velocity.y);
+
+         
+    }
 
     void OnCollisionEnter2D(Collision2D otherObj)
     {
