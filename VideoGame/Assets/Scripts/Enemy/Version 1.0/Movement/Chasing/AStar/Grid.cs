@@ -53,7 +53,7 @@ public class Grid<TGridObject> {
         return new Vector2(x, y) * cellSize + originPosition;
     }
 
-    private void GetXY(Vector2 worldPosition, out int x, out int y) // out passes by reference, not by value
+    public void GetXY(Vector2 worldPosition, out int x, out int y) // out passes by reference, not by value
     {
         x = Mathf.FloorToInt((worldPosition - originPosition).x / cellSize);
         y = Mathf.FloorToInt((worldPosition - originPosition).y / cellSize);
