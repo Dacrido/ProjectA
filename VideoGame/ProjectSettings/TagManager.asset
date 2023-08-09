@@ -9,6 +9,8 @@ TagManager:
   - Player Projectile
   - Enemy Projectile
   - Map
+  - Ladder
+  - Arrow
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - UI
   - Ground
   - Enemy
-  - 
+  - Ladder
   - 
   - 
   - 
