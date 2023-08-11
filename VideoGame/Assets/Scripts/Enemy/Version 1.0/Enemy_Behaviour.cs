@@ -162,7 +162,7 @@ public class Enemy_Behaviour : MonoBehaviour
         idle.enabled = false;
         //foreach (MonoBehaviour script in attackScripts)
             //script.enabled = false;
-        //chaseScript.enabled = false;
+        chaseScript.enabled = false;
 
     }
 
@@ -192,11 +192,11 @@ public class Enemy_Behaviour : MonoBehaviour
                 currentMinTime = (idle as IMovementScript).minTime;
                 currentMaxTime = (idle as IMovementScript).maxTime;
                 break;
-            case State.Chase:                
+            case State.Chase:
                 activeScript = chaseScript;
                 (currentMovement as MonoBehaviour).enabled = true;
-                //currentMinTime = minChaseTime;
-                //currentMaxTime = maxChaseTime;
+                currentMinTime = (chaseScript as IMovementScript).minTime;
+                currentMaxTime = (chaseScript as IMovementScript).maxTime;
                 break;
             case State.Attack:
                 //chooseAttackScript();
@@ -206,12 +206,13 @@ public class Enemy_Behaviour : MonoBehaviour
 
         }
 
-        float skewness = (currentMaxTime - currentMinTime) / 2;
+        float skewness = (currentMaxTime + currentMinTime) / 2;
         if (random.NextDouble() > 0.35d)
             currentMinTime = skewness;
         else
             currentMaxTime = skewness;
         chosenTime = (float) random.NextDouble() * (currentMaxTime - currentMinTime) + currentMinTime;
+        print(chosenTime);
 
     }
 
@@ -291,6 +292,9 @@ public class Enemy_Behaviour : MonoBehaviour
 
                 break;
         }
+
+        if (seePlayer())
+            currentState = State.Chase;
         
         
         
@@ -300,6 +304,9 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         if (timeTillChangeState())
             currentState = State.Default;
+
+        if (seePlayer())
+            currentState = State.Chase;
     }
 
     private void chaseBehaviour()
@@ -308,8 +315,20 @@ public class Enemy_Behaviour : MonoBehaviour
         if (seePlayer()) // resets to 0 if sees the player
             timer = 0f;
 
-        if (timeTillChangeState())
-            currentState = State.Idle;
+        switch (currentType)
+        {
+            case Type.Ground:
+                if (isGrounded() && timeTillChangeState())
+                    currentState = State.Idle;
+                break;
+
+            case Type.Flying:
+                if (timeTillChangeState())
+                    currentState = State.Idle;
+                break;
+        }
+
+        
         
     }
 
@@ -357,6 +376,13 @@ public class Enemy_Behaviour : MonoBehaviour
         this.direction = direction;
     }
 
+    public bool isFlying()
+    {
+        if (currentType == Type.Flying)
+            return true;
+        return false;
+    }
+
     // extraRayDistance: extra distance added to the ray say if the enemy is jumping off the ground
     public bool isGrounded(float extraRayDistance = 0.0f) // Checks if the enemy is on the ground of not
     {
@@ -365,15 +391,19 @@ public class Enemy_Behaviour : MonoBehaviour
         ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2); // Places the x position to the front of the enemy depending on direction
         ray_Position.y -= boxCollider.size.y / 2 - boxCollider.offset.y;
 
-        // Direction and distance of downwards ray
+        // Direction and distance of downwards ray 
         Vector2 ray_Direction = Vector2.down;
-        float ray_Distance = 0.1f + extraRayDistance;
+        float ray_Distance = 0.2f + extraRayDistance;
 
-        RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer); // May have to change to a boxcast **********************************
+        Vector2 box_Size = new Vector2(boxCollider.size.x, 0.01f);
+
+        RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer);
 
         if (checkForGround.collider != null)
             return true;
         return false;
+
+        
     }
 
     public bool isWalled()

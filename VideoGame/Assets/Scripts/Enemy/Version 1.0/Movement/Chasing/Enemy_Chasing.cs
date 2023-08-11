@@ -4,57 +4,95 @@ using UnityEngine;
 using Pathfinding;
 using System.Runtime.CompilerServices;
 
-public class Enemy_Chasing : MonoBehaviour
+public class Enemy_Chasing : MonoBehaviour, IMovementScript
 {
+    [SerializeField]
+    private float _minTime;
+    public float minTime
+    {
+        get { return _minTime; }
+        set { _minTime = value; }
+    }
+
+    [SerializeField]
+    private float _maxTime;
+    public float maxTime
+    {
+        get { return _maxTime; }
+        set { _maxTime = value; }
+    }
+
+    public bool canRepeat => throw new System.NotImplementedException();
+
+    public bool needsLadder => throw new System.NotImplementedException();
+
+    public bool isFlying => throw new System.NotImplementedException();
+
+    public float distanceFromGround()
+    {
+        throw new System.NotImplementedException();
+    }
+
 
     [Header("Pathfinding")]
-    public Transform target;
-    public float activateDistance = 50f;
+    private Transform target;
+    //public float activateDistance = 50f;
     public float pathUpdateSeconds = 0.3f;
 
     [Header("Physics")]
-    public float speed = 200f;
+    //public float speed = 200f;
     public float nextWaypointDistance = 3f;
-    public float jumpNodeHeightRequirement = 0.8f;
-    public float jumpModifier = 0.3f;
-    public float jumpCheckOffset = 0.1f;
+    //public float jumpNodeHeightRequirement = 0.8f;
+    //public float jumpModifier = 0.3f;
+    //public float jumpCheckOffset = 0.1f;
 
     [Header("Custom Behavior")]
-    public bool followEnabled = true;
-    public bool jumpEnabled = true;
-    public bool directionLookEnabled = true;
+    //public bool followEnabled = true;
+    //public bool jumpEnabled = true;
+    //public bool directionLookEnabled = true;\
 
     private Path path;
     private int currentWaypoint = 0;
-    RaycastHit2D isGrounded;
+    //RaycastHit2D isGrounded;
     Seeker seeker;
     Rigidbody2D rb;
+    private Enemy_Behaviour General;
 
     public void Start()
     {
+        target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
+        General = GetComponent<Enemy_Behaviour>();
 
+        
+    }
+
+    private void OnEnable()
+    {
         InvokeRepeating("UpdatePath", 0f, pathUpdateSeconds);
+        
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke("UpdatePath");
     }
 
     private void FixedUpdate()
     {
-        if (TargetInDistance() && followEnabled)
-        {
-            PathFollow();
-        }
+        CalculateDirection();
     }
 
     private void UpdatePath()
     {
-        if (followEnabled && TargetInDistance() && seeker.IsDone())
+        if (seeker.IsDone())
         {
             seeker.StartPath(rb.position, target.position, OnPathComplete);
         }
     }
 
-    private void PathFollow()
+    private void CalculateDirection()
     {
         if (path == null)
         {
@@ -68,24 +106,34 @@ public class Enemy_Chasing : MonoBehaviour
         }
 
         // See if colliding with anything
-        Vector3 startOffset = transform.position - new Vector3(0f, GetComponent<Collider2D>().bounds.extents.y + jumpCheckOffset);
-        isGrounded = Physics2D.Raycast(startOffset, -Vector3.up, 0.05f);
+        //Vector3 startOffset = transform.position - new Vector3(0f, GetComponent<Collider2D>().bounds.extents.y + jumpCheckOffset);
+        //isGrounded = Physics2D.Raycast(startOffset, -Vector3.up, 0.05f);
 
         // Direction Calculation
         Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-        Vector2 force = direction * speed * Time.deltaTime;
+
+        if (!General.isFlying())
+        {
+            if (General.isGrounded())
+                direction = new Vector2(direction.x, 0).normalized;
+            else
+                direction = Vector2.down;
+        }
+            
+        General.setDirection(direction);
+        //Vector2 force = direction * speed * Time.deltaTime;
 
         // Jump
-        if (jumpEnabled && isGrounded)
+        /*if (jumpEnabled && isGrounded)
         {
             if (direction.y > jumpNodeHeightRequirement)
             {
                 rb.AddForce(Vector2.up * speed * jumpModifier);
             }
-        }
+        }*/
 
         // Movement
-        rb.AddForce(force);
+        //rb.AddForce(force);
 
         // Next Waypoint
         float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
@@ -95,7 +143,7 @@ public class Enemy_Chasing : MonoBehaviour
         }
 
         // Direction Graphics Handling
-        if (directionLookEnabled)
+        /*if (directionLookEnabled)
         {
             if (rb.velocity.x > 0.05f)
             {
@@ -105,12 +153,7 @@ public class Enemy_Chasing : MonoBehaviour
             {
                 transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
-        }
-    }
-
-    private bool TargetInDistance()
-    {
-        return Vector2.Distance(transform.position, target.transform.position) < activateDistance;
+        }*/
     }
 
     private void OnPathComplete(Path p)
