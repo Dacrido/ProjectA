@@ -129,7 +129,7 @@ public class Enemy_Behaviour : MonoBehaviour
         // Big problem with random is that all instances of random in all of the enemies are using the same seed. With the same seed, the same set of numbers occur
         // To fix this, we need a separate seed per script instance, and do this by setting the seed of random to a unique value based on the current time and the instance ID of the script
         random = new System.Random(DateTime.Now.Millisecond + GetInstanceID());
-
+        
         if (possible_States.Contains(State.Default))
         {
             currentState = State.Default;
@@ -144,7 +144,6 @@ public class Enemy_Behaviour : MonoBehaviour
             throw new Exception("Must have at least either movement or idle script attached");
         }
         //OnStateChanged(); // Calls to start the whole script activation process
-
     }
 
     // Update is called once per frame
@@ -314,6 +313,7 @@ public class Enemy_Behaviour : MonoBehaviour
     }
     private void defaultBehaviour(float extra = 0.0f)
     {
+        
         switch (currentType)
         {
             case Type.Ground:
