@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Threading;
+using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Progress;
 using static UnityEngine.EventSystems.EventTrigger;
 using Random = UnityEngine.Random;
 
@@ -47,15 +49,20 @@ public class Enemy_Behaviour : MonoBehaviour
             if (_currentState != value)
             {
                 _currentState = value;
-                OnStateChanged();
+                
             }
+            OnStateChanged();
         }
     }
 
+    private HashSet<State> possible_States;
+
 
     // ************* SCRIPTS *************
+
     [SerializeField] private MonoBehaviour[] movementScripts;
     [SerializeField] private MonoBehaviour idle;
+    [SerializeField] private bool idleOnGroundOnly;
     [SerializeField] private MonoBehaviour[] attackScripts; // contact damage is always applied, so does not take part in this array
     [SerializeField] private MonoBehaviour chaseScript;
 
@@ -107,12 +114,12 @@ public class Enemy_Behaviour : MonoBehaviour
     LayerMask groundLayer;
     LayerMask playerLayer;
 
-
     // Start is called before the first frame update
     void Start()
     {
         activeScript = null;
         disableScripts();
+        getPossibleStates();
 
         groundLayer = LayerMask.GetMask("Ground");
         playerLayer = LayerMask.GetMask("Player");
@@ -123,12 +130,21 @@ public class Enemy_Behaviour : MonoBehaviour
         // To fix this, we need a separate seed per script instance, and do this by setting the seed of random to a unique value based on the current time and the instance ID of the script
         random = new System.Random(DateTime.Now.Millisecond + GetInstanceID());
 
+        if (possible_States.Contains(State.Default))
+        {
+            currentState = State.Default;
+        }
+        else if (possible_States.Contains(State.Idle))
+        {
+            currentState = State.Idle;
+            currentType = Type.Flying; // Idle at the start makes enemy stay in mid-air
+            chooseDirection();
+        }
+        else {
+            throw new Exception("Must have at least either movement or idle script attached");
+        }
+        //OnStateChanged(); // Calls to start the whole script activation process
 
-
-
-        currentState = State.Default; 
-        OnStateChanged(); // Calls to start the whole script activation process
-        
     }
 
     // Update is called once per frame
@@ -159,18 +175,39 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         foreach (MonoBehaviour script in movementScripts)
             script.enabled = false;
-        idle.enabled = false;
+        if (idle != null)
+            idle.enabled = false;
         //foreach (MonoBehaviour script in attackScripts)
             //script.enabled = false;
-        chaseScript.enabled = false;
+        if (chaseScript != null)
+            chaseScript.enabled = false;
 
+    }
+
+    void getPossibleStates()
+    {
+        possible_States = new HashSet<State>();
+        if (movementScripts.Length != 0)
+            possible_States.Add(State.Default);
+        if (idle != null)
+            possible_States.Add(State.Idle);
+        if (chaseScript != null)
+            possible_States.Add(State.Chase);
+        if (attackScripts.Length != 0)
+            possible_States.Add(State.Attack);
+    }
+
+    void getNextState(State nextState, State ifFirstNotPossible)
+    {
+        if (possible_States.Contains(nextState))
+            currentState = nextState;
+        else
+            currentState = ifFirstNotPossible;
     }
 
     void OnStateChanged()
     {
-        
         timer = 0f;
-
         switch (currentState)
         {
             case State.Default:
@@ -188,19 +225,22 @@ public class Enemy_Behaviour : MonoBehaviour
                 break;
             case State.Idle:
                 activeScript = idle;
-                (currentMovement as MonoBehaviour).enabled = false;
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = false;
                 currentMinTime = (idle as IMovementScript).minTime;
                 currentMaxTime = (idle as IMovementScript).maxTime;
                 break;
             case State.Chase:
                 activeScript = chaseScript;
-                (currentMovement as MonoBehaviour).enabled = true;
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = true;
                 currentMinTime = (chaseScript as IMovementScript).minTime;
                 currentMaxTime = (chaseScript as IMovementScript).maxTime;
                 break;
             case State.Attack:
                 //chooseAttackScript();
-                (currentMovement as MonoBehaviour).enabled = false;
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = false;
                 break;
 
 
@@ -212,7 +252,7 @@ public class Enemy_Behaviour : MonoBehaviour
         else
             currentMaxTime = skewness;
         chosenTime = (float) random.NextDouble() * (currentMaxTime - currentMinTime) + currentMinTime;
-        print(chosenTime);
+        
 
     }
 
@@ -278,7 +318,10 @@ public class Enemy_Behaviour : MonoBehaviour
         {
             case Type.Ground:
                 if (isGrounded() && timeTillChangeState())
-                    currentState = State.Idle;
+                {
+                    getNextState(State.Idle, State.Default);
+                }
+                    
 
                 if (!isGrounded(extra) || isWalled())
                 {
@@ -287,13 +330,26 @@ public class Enemy_Behaviour : MonoBehaviour
                 break;
 
             case Type.Flying:
-                if (isGrounded() && timeTillChangeState())
-                    currentState = State.Idle;
-
+                if (idleOnGroundOnly)
+                {
+                    if (isGrounded() && timeTillChangeState())
+                    {
+                        getNextState(State.Idle, State.Default);
+                    }
+                        
+                }
+                else
+                {
+                    if (timeTillChangeState())
+                    {
+                        getNextState(State.Idle, State.Default);
+                    }
+                        
+                }
                 break;
         }
 
-        if (seePlayer())
+        if (possible_States.Contains(State.Chase) && seePlayer())
             currentState = State.Chase;
         
         
@@ -303,15 +359,16 @@ public class Enemy_Behaviour : MonoBehaviour
     private void idleBehaviour()
     {
         if (timeTillChangeState())
-            currentState = State.Default;
-
-        if (seePlayer())
+        {
+            getNextState(State.Default, State.Idle);
+        }
+        if (possible_States.Contains(State.Chase) && seePlayer())
             currentState = State.Chase;
     }
 
     private void chaseBehaviour()
-    {   
-
+    {
+        
         if (seePlayer()) // resets to 0 if sees the player
             timer = 0f;
 
@@ -319,13 +376,15 @@ public class Enemy_Behaviour : MonoBehaviour
         {
             case Type.Ground:
                 if (isGrounded() && timeTillChangeState())
-                    currentState = State.Idle;
+                {
+                    getNextState(State.Idle, State.Default);
+                }
                 break;
-
             case Type.Flying:
                 if (timeTillChangeState())
-                    currentState = State.Idle;
+                    getNextState(State.Idle, State.Default);
                 break;
+                
         }
 
         
@@ -337,6 +396,15 @@ public class Enemy_Behaviour : MonoBehaviour
         
     }
 
+    public void stopMovement() // Stops all movement (does not change to idle, just stops movement)
+    {
+        (currentMovement as MonoBehaviour).enabled = false;
+    }
+
+    public void continueMovement()
+    {
+        (currentMovement as MonoBehaviour).enabled = true;
+    }
 
 
     private bool timeTillChangeState()
@@ -351,7 +419,7 @@ public class Enemy_Behaviour : MonoBehaviour
     // ************************************************************************************ STATS ****************************************************************************
     void chooseDirection()
     {
-
+        
         switch (currentType)
         {
             case Type.Ground: // direction either left or right. Up/down only possible for those who can climb ladders, and only when next to a ladder. 
@@ -415,9 +483,9 @@ public class Enemy_Behaviour : MonoBehaviour
         Vector2 ray_Direction = direction * Vector2.right;
         float ray_Distance = 0.05f;
 
-        Vector2 ray_Size = new Vector2(0.4f, boxCollider.size.y);
+        Vector2 box_Size = new Vector2(0.4f, boxCollider.size.y);
 
-        RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, ray_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
+        RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, box_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
 
         if (checkForWall.collider != null)
             return true;

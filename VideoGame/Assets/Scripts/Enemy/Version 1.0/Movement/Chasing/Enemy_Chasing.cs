@@ -111,15 +111,38 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
 
         // Direction Calculation
         Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-
         if (!General.isFlying())
         {
-            if (General.isGrounded())
-                direction = new Vector2(direction.x, 0).normalized;
-            else
-                direction = Vector2.down;
-        }
             
+            /*if (General.isWalled())
+            {
+                General.stopMovement();
+            } else
+            
+            if (!General.isGrounded())
+            {
+                float angle = Vector2.Angle(direction, Vector2.down);
+                if (angle < 40f)
+                {
+                    General.continueMovement();
+                } else
+                {
+                    General.stopMovement();
+                }
+                // Continue is movement direction is downwards at a steep incline (45 degrees down -> 90)
+                // Else stop
+            } else
+
+            if (direction == Vector2.up)
+            {
+                General.stopMovement();
+            }*/
+
+            
+            
+            direction = new Vector2(Mathf.Sign(direction.x), 0);
+        }
+           
         General.setDirection(direction);
         //Vector2 force = direction * speed * Time.deltaTime;
 
