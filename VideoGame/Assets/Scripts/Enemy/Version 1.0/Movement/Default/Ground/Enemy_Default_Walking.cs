@@ -48,7 +48,7 @@ public class Enemy_Default_Walking : MonoBehaviour, IMovementScript // Maybe ext
     [SerializeField] private float speed;
 
     // Start is called before the first frame update    
-    void Start()
+    void Awake()
     {
         needsLadder = false;
         isFlying = false;

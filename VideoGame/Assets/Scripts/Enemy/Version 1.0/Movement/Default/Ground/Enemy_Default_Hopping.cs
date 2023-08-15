@@ -48,7 +48,7 @@ public class Enemy_Default_Hopping : MonoBehaviour, IMovementScript
     private float startingHeight; // starting height before the jump
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         needsLadder = false;
         isFlying = false;

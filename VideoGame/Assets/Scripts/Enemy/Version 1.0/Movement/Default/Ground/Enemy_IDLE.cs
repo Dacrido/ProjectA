@@ -36,7 +36,7 @@ public class Enemy_IDLE : MonoBehaviour, IMovementScript
     private Rigidbody2D rb;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();        
     }

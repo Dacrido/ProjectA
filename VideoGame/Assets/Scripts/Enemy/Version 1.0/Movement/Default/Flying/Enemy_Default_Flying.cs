@@ -46,7 +46,7 @@ public class Enemy_Default_Flying : MonoBehaviour, IMovementScript
     private int counter = 0;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         needsLadder = false;
         isFlying = true;
