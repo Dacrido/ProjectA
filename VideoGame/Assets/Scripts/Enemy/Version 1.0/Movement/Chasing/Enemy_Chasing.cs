@@ -140,7 +140,14 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
 
             
             
-            direction = new Vector2(Mathf.Sign(direction.x), 0);
+            //direction = new Vector2(Mathf.Sign(direction.x), 0);
+        } else
+        {
+            /*if (General.isGrounded())
+                direction = new Vector2(Mathf.Sign(direction.x), 0);
+            else if (General.isWalled())
+                direction = new Vector2(0, Mathf.Sign(direction.y));*/
+
         }
            
         General.setDirection(direction);

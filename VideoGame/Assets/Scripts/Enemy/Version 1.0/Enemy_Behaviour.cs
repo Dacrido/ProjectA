@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using System.Diagnostics;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
@@ -493,17 +494,25 @@ public class Enemy_Behaviour : MonoBehaviour
         return false;
     }
 
-    public bool seePlayer()
+    public bool seePlayer() // sending 3 rays in a triangle like shape to detect the player
     {
 
         Vector2 ray_Position = transform.position;
         ray_Position.x += direction.x * (boxCollider.offset.x + boxCollider.size.x / 2);
+        ray_Position.y += direction.y * (boxCollider.offset.y + boxCollider.size.y / 2);
 
-        Vector2 ray_Direction = direction * Vector2.right;
+        Vector2 ray_Direction = direction;
         float ray_Distance = 4.0f;
 
-        RaycastHit2D checkForPlayer = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, playerLayer);
+        float angleBetweenRays = 10.0f;
 
+        RaycastHit2D checkForPlayer = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, playerLayer);
+        if (checkForPlayer.collider != null)
+            return true;
+        checkForPlayer = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, angleBetweenRays) * ray_Direction, ray_Distance, playerLayer);
+        if (checkForPlayer.collider != null)
+            return true;
+        checkForPlayer = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, -angleBetweenRays) * ray_Direction, ray_Distance, playerLayer);
         if (checkForPlayer.collider != null)
             return true;
         return false;

@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 2565529196665595931}
   - component: {fileID: 2565529196665595938}
   - component: {fileID: -259789290369102588}
+  - component: {fileID: 2945144093493748399}
   m_Layer: 7
   m_Name: Testing
   m_TagString: Enemy
@@ -177,8 +178,9 @@ MonoBehaviour:
   - {fileID: 2565529196665595931}
   - {fileID: -259789290369102588}
   idle: {fileID: 2565529196665595930}
+  idleOnGroundOnly: 1
   attackScripts: []
-  chaseScript: {fileID: 0}
+  chaseScript: {fileID: 2945144093493748399}
 --- !u!114 &2565529196665595929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,3 +257,19 @@ MonoBehaviour:
   _maxTime: 16
   _canRepeat: 0
   speed: 3
+--- !u!114 &2945144093493748399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565529196665595924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb30b76c4df43bb46862190e54d173dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 4
+  pathUpdateSeconds: 0.3
+  nextWaypointDistance: 3
