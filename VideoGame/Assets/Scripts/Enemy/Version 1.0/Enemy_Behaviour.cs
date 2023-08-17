@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using static UnityEditor.Progress;
 using static UnityEngine.EventSystems.EventTrigger;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 
@@ -481,13 +483,13 @@ public class Enemy_Behaviour : MonoBehaviour
         ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2);
         //ray_Position.y += boxCollider.offset.y;
 
-        Vector2 ray_Direction = direction * Vector2.right;
+        Vector2 ray_Direction = direction;
         float ray_Distance = 0.05f;
 
         Vector2 box_Size = new Vector2(0.4f, boxCollider.size.y);
 
         RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, box_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
-
+        
         if (checkForWall.collider != null)
             return true;
 
@@ -506,15 +508,35 @@ public class Enemy_Behaviour : MonoBehaviour
 
         float angleBetweenRays = 10.0f;
 
-        RaycastHit2D checkForPlayer = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, playerLayer);
-        if (checkForPlayer.collider != null)
-            return true;
-        checkForPlayer = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, angleBetweenRays) * ray_Direction, ray_Distance, playerLayer);
-        if (checkForPlayer.collider != null)
-            return true;
-        checkForPlayer = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, -angleBetweenRays) * ray_Direction, ray_Distance, playerLayer);
-        if (checkForPlayer.collider != null)
-            return true;
+        int layerMask = LayerMask.GetMask("Player", "Ground"); // So that raycasts cant go through the ground
+
+        RaycastHit2D hit = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, layerMask);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                return true;
+            }
+        }
+        hit = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, angleBetweenRays) * ray_Direction, ray_Distance, layerMask);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                return true;
+            }
+        }
+        hit = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, -angleBetweenRays) * ray_Direction, ray_Distance, layerMask);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                return true;
+            }
+        }
+        Debug.DrawRay(ray_Position, Quaternion.Euler(0, 0, angleBetweenRays) * ray_Direction * ray_Distance, Color.green);
+        Debug.DrawRay(ray_Position, ray_Direction * ray_Distance, Color.green);
+        Debug.DrawRay(ray_Position, Quaternion.Euler(0, 0, -angleBetweenRays) * ray_Direction * ray_Distance, Color.green);
         return false;
     }
 
