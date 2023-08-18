@@ -477,19 +477,22 @@ public class Enemy_Behaviour : MonoBehaviour
         
     }
 
-    public bool isWalled()
+    public bool isWalled(float extraRayDistance = 0.0f, Vector2 direction = direction)
     {
         Vector2 ray_Position = transform.position;
-        ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2);
+        //ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2);
         //ray_Position.y += boxCollider.offset.y;
+        ray_Position.x += direction.x * (boxCollider.offset.x + boxCollider.size.x / 2);
+        ray_Position.y += direction.y * (boxCollider.offset.y + boxCollider.size.y / 2);
 
         Vector2 ray_Direction = direction;
-        float ray_Distance = 0.05f;
+        float ray_Distance = 0.05f + extraRayDistance;
 
         Vector2 box_Size = new Vector2(0.4f, boxCollider.size.y);
 
         RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, box_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
-        
+        Debug.DrawRay(ray_Position + new Vector2(box_Size.x / 2f, box_Size.y / 2f), ray_Direction * ray_Distance, Color.red);
+        Debug.DrawRay(ray_Position + new Vector2(box_Size.x / 2f, -box_Size.y / 2f), ray_Direction * ray_Distance, Color.red);
         if (checkForWall.collider != null)
             return true;
 
@@ -534,9 +537,7 @@ public class Enemy_Behaviour : MonoBehaviour
                 return true;
             }
         }
-        Debug.DrawRay(ray_Position, Quaternion.Euler(0, 0, angleBetweenRays) * ray_Direction * ray_Distance, Color.green);
-        Debug.DrawRay(ray_Position, ray_Direction * ray_Distance, Color.green);
-        Debug.DrawRay(ray_Position, Quaternion.Euler(0, 0, -angleBetweenRays) * ray_Direction * ray_Distance, Color.green);
+        
         return false;
     }
 
