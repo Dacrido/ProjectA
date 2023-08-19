@@ -258,6 +258,11 @@ public class Enemy_Behaviour : MonoBehaviour
 
     }
 
+    public bool isDefault()
+    {
+        return currentState == State.Default;
+    }
+
     /*
      * Movement script conditions: 
      *            - Min time performed
@@ -477,13 +482,11 @@ public class Enemy_Behaviour : MonoBehaviour
         
     }
 
-    public bool isWalled(float extraRayDistance = 0.0f, Vector2 direction = direction)
+    public bool isWalled(float extraRayDistance = 0.0f)
     {
         Vector2 ray_Position = transform.position;
-        //ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2);
-        //ray_Position.y += boxCollider.offset.y;
-        ray_Position.x += direction.x * (boxCollider.offset.x + boxCollider.size.x / 2);
-        ray_Position.y += direction.y * (boxCollider.offset.y + boxCollider.size.y / 2);
+        ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2);
+        ray_Position.y += boxCollider.offset.y;
 
         Vector2 ray_Direction = direction;
         float ray_Distance = 0.05f + extraRayDistance;
@@ -491,8 +494,7 @@ public class Enemy_Behaviour : MonoBehaviour
         Vector2 box_Size = new Vector2(0.4f, boxCollider.size.y);
 
         RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, box_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
-        Debug.DrawRay(ray_Position + new Vector2(box_Size.x / 2f, box_Size.y / 2f), ray_Direction * ray_Distance, Color.red);
-        Debug.DrawRay(ray_Position + new Vector2(box_Size.x / 2f, -box_Size.y / 2f), ray_Direction * ray_Distance, Color.red);
+        
         if (checkForWall.collider != null)
             return true;
 
