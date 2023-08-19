@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 
 public class Enemy_Chasing : MonoBehaviour, IMovementScript
 {
@@ -46,11 +47,15 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
     //public float jumpModifier = 0.3f;
     //public float jumpCheckOffset = 0.1f;
 
+    private Vector2 collisionPosition;
+    private bool collided;
+
     [Header("Custom Behavior")]
     //public bool followEnabled = true;
     //public bool jumpEnabled = true;
     //public bool directionLookEnabled = true;\
 
+    private BoxCollider2D boxCollider;
     private Path path;
     private int currentWaypoint = 0;
     //RaycastHit2D isGrounded;
@@ -64,7 +69,10 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         General = GetComponent<Enemy_Behaviour>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        collided = false;
 
+        
         
     }
 
@@ -82,6 +90,36 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
     private void FixedUpdate()
     {
         CalculateDirection();
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!enabled)
+            return;
+
+        
+
+        
+
+        if (!collided && General.isFlying() && collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            
+            
+            collided = true;
+            collisionPosition = transform.position;
+
+            Vector2 collisionNormal = collision.contacts[0].normal;
+            Vector2 direction = new Vector2(-collisionNormal.x, -collisionNormal.y);
+
+            if (Mathf.Abs(direction.x) >= Mathf.Abs(direction.y))
+            {
+                General.setDirection(new Vector2(0, Mathf.Sign(General.getDirection().y)));
+            } else
+            {
+                General.setDirection(new Vector2(Mathf.Sign(General.getDirection().x), 0));
+            }
+
+        }
     }
 
     private void UpdatePath()
@@ -110,47 +148,23 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
         //isGrounded = Physics2D.Raycast(startOffset, -Vector3.up, 0.05f);
 
         // Direction Calculation
-        Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-        if (!General.isFlying())
+
+        if (collided)
         {
-            
-            /*if (General.isWalled())
-            {
-                General.stopMovement();
-            } else
-            
-            if (!General.isGrounded())
-            {
-                float angle = Vector2.Angle(direction, Vector2.down);
-                if (angle < 40f)
-                {
-                    General.continueMovement();
-                } else
-                {
-                    General.stopMovement();
-                }
-                // Continue is movement direction is downwards at a steep incline (45 degrees down -> 90)
-                // Else stop
-            } else
 
-            if (direction == Vector2.up)
-            {
-                General.stopMovement();
-            }*/
-
+            if (Mathf.Abs(transform.position.x - collisionPosition.x) >= boxCollider.size.x/2)
+                collided = false;
+            else if (Mathf.Abs(transform.position.y - collisionPosition.y) >= boxCollider.size.y/2)
+                collided = false;
             
-            
-            //direction = new Vector2(Mathf.Sign(direction.x), 0);
         } else
         {
-            /*if (General.isGrounded())
-                direction = new Vector2(Mathf.Sign(direction.x), 0);
-            else if (General.isWalled())
-                direction = new Vector2(0, Mathf.Sign(direction.y));*/
-
+            Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+            General.setDirection(direction);
         }
-           
-        General.setDirection(direction);
+
+        
+
         //Vector2 force = direction * speed * Time.deltaTime;
 
         // Jump

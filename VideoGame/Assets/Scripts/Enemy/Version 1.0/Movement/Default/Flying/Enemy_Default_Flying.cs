@@ -71,7 +71,8 @@ public class Enemy_Default_Flying : MonoBehaviour, IMovementScript
     // For some reason, onCollisions still run even if the script itself is disabled ****************************************
     private void OnCollisionStay2D(Collision2D collision) // Stay not Enter as if enemy is in idle and colliding, enter isnt called in this script
     {
-        if (!enabled)
+        
+        if (!enabled || !General.isDefault())
             return;
 
         if (counter == 0)
