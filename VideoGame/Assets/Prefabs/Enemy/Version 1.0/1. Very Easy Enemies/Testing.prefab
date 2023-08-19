@@ -272,8 +272,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minTime: 2
   _maxTime: 4
-  pathUpdateSeconds: 0.3
-  nextWaypointDistance: 3
+  yFollowDistance: 2
+  xFollowDistance: 2
 --- !u!114 &-7276532781575663517
 MonoBehaviour:
   m_ObjectHideFlags: 0
