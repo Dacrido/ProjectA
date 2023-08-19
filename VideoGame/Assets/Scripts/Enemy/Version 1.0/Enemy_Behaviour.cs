@@ -263,6 +263,8 @@ public class Enemy_Behaviour : MonoBehaviour
         return currentState == State.Default;
     }
 
+
+
     /*
      * Movement script conditions: 
      *            - Min time performed
@@ -358,9 +360,7 @@ public class Enemy_Behaviour : MonoBehaviour
         }
 
         if (possible_States.Contains(State.Chase) && seePlayer())
-            currentState = State.Chase;
-        
-        
+            currentState = State.Chase;       
         
     }
 
@@ -450,6 +450,11 @@ public class Enemy_Behaviour : MonoBehaviour
         if (this.direction.x == direction.x * -1)
             Flip();
         this.direction = direction;
+    }
+
+    public float getDistanceFromGround()
+    {
+        return currentMovement.distanceFromGround();
     }
 
     public bool isFlying()

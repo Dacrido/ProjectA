@@ -38,17 +38,20 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
     [Header("Pathfinding")]
     private Transform target;
     //public float activateDistance = 50f;
-    public float pathUpdateSeconds = 0.3f;
+    private float pathUpdateSeconds = 0.3f;
 
     [Header("Physics")]
     //public float speed = 200f;
-    public float nextWaypointDistance = 3f;
+    private float nextWaypointDistance = 3f;
     //public float jumpNodeHeightRequirement = 0.8f;
     //public float jumpModifier = 0.3f;
     //public float jumpCheckOffset = 0.1f;
 
     private Vector2 collisionPosition;
     private bool collided;
+
+    public float yFollowDistance;
+    public float xFollowDistance;
 
     [Header("Custom Behavior")]
     //public bool followEnabled = true;
@@ -94,14 +97,12 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
 
     void OnCollisionStay2D(Collision2D collision)
     {
-        if (!enabled)
-            return;
+        if (!enabled || !General.isFlying())
+            return;  
 
         
 
-        
-
-        if (!collided && General.isFlying() && collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        if (!collided && collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
             
             
@@ -149,19 +150,42 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
 
         // Direction Calculation
 
-        if (collided)
+        if (General.isFlying())
         {
+            if (collided)
+            {
 
-            if (Mathf.Abs(transform.position.x - collisionPosition.x) >= boxCollider.size.x/2)
-                collided = false;
-            else if (Mathf.Abs(transform.position.y - collisionPosition.y) >= boxCollider.size.y/2)
-                collided = false;
-            
+                if (Mathf.Abs(transform.position.x - collisionPosition.x) >= boxCollider.size.x / 2)
+                    collided = false;
+                else if (Mathf.Abs(transform.position.y - collisionPosition.y) >= boxCollider.size.y / 2)
+                    collided = false;
+
+            }
+            else
+            {
+                Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+                General.setDirection(direction);
+            }
         } else
         {
-            Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-            General.setDirection(direction);
+            
+            if (!General.isGrounded(General.getDistanceFromGround()))
+            {
+                if (transform.position.y - yFollowDistance > target.position.y)
+                    General.stopMovement();
+                else if (transform.position.x + xFollowDistance < target.position.x)
+                    General.stopMovement();
+                else if (transform.position.x - xFollowDistance > target.position.x)
+                    General.stopMovement();
+            } else
+            {
+                Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+                General.setDirection(direction);
+            }
+            
+            
         }
+        
 
         
 
