@@ -5,11 +5,11 @@ using UnityEngine;
 public class Enemy_Collision_Damage : MonoBehaviour
 {
     public int damage;
-    private void OnCollisionEnter2D(Collision2D collision) // Private is on by default
+    private void OnCollisionStay2D(Collision2D collision) // Private is on by default
     {
         if (collision.gameObject.tag == "Player")
         {
-            Player_Health playerHealth = collision.gameObject.GetComponent<Player_Health>();
+            player_health playerHealth = collision.gameObject.GetComponent<player_health>();
             playerHealth.takeDamage(damage);
         }
     }

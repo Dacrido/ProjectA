@@ -74,4 +74,5 @@ public class Default : MonoBehaviour, IMovementScript
     {
         return 0f;
     }
+
 }

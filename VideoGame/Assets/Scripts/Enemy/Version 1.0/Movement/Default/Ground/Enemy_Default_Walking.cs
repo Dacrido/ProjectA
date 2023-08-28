@@ -72,4 +72,5 @@ public class Enemy_Default_Walking : MonoBehaviour, IMovementScript // Maybe ext
     {
         return 0f;
     }
+
 }
