@@ -48,10 +48,19 @@ public class Enemy_Default_Hopping : MonoBehaviour, IMovementScript
     private float startingHeight; // starting height before the jump
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        needsLadder = false;
+        isFlying = false;
+
         rb = GetComponent<Rigidbody2D>();
         General = GetComponent<Enemy_Behaviour>();
+    }
+
+    private void OnEnable()
+    {
+        if (rb != null)
+            rb.gravityScale = 1;
     }
 
     // Update is called once per frame

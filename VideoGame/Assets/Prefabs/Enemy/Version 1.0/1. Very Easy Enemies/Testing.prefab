@@ -18,6 +18,9 @@ GameObject:
   - component: {fileID: 2565529196665595930}
   - component: {fileID: 2565529196665595931}
   - component: {fileID: 2565529196665595938}
+  - component: {fileID: -259789290369102588}
+  - component: {fileID: 2945144093493748399}
+  - component: {fileID: -7276532781575663517}
   m_Layer: 7
   m_Name: Testing
   m_TagString: Enemy
@@ -105,7 +108,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -174,10 +177,11 @@ MonoBehaviour:
   movementScripts:
   - {fileID: 2565529196665595929}
   - {fileID: 2565529196665595931}
+  - {fileID: -259789290369102588}
   idle: {fileID: 2565529196665595930}
+  idleOnGroundOnly: 1
   attackScripts: []
-  chaseScript: {fileID: 0}
-  type: 0
+  chaseScript: {fileID: 2945144093493748399}
 --- !u!114 &2565529196665595929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,6 +210,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efbf0c3ef360c343887be11a657d54e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 4
 --- !u!114 &2565529196665595931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,7 +228,7 @@ MonoBehaviour:
   _maxTime: 15
   _canRepeat: 1
   speed: 4
-  jumpPower: 5
+  jumpPower: 4
 --- !u!114 &2565529196665595938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,3 +242,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+--- !u!114 &-259789290369102588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565529196665595924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec962b325822fd40b081fd7afe4052f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 16
+  _canRepeat: 0
+  speed: 3
+--- !u!114 &2945144093493748399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565529196665595924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb30b76c4df43bb46862190e54d173dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _minTime: 2
+  _maxTime: 4
+  yFollowDistance: 2
+  xFollowDistance: 2
+--- !u!114 &-7276532781575663517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2565529196665595924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1

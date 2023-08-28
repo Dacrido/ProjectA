@@ -1,8 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
+using System.Diagnostics;
+using System.Threading;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Progress;
 using static UnityEngine.EventSystems.EventTrigger;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 
@@ -21,38 +28,87 @@ using Random = UnityEngine.Random;
  */
 public class Enemy_Behaviour : MonoBehaviour
 {
+
+    // ************* GENERAL *************
+
+    System.Random random;
+
+
     // ************* STATES *************
     private enum State
     {
         Default, 
+        Idle,
         Chase, 
         Attack
     }
 
-    private State currentState;
+    private State _currentState;
+    private State currentState
+    {
+        get { return _currentState; }
+        set
+        {
+            if (_currentState != value)
+            {
+                _currentState = value;
+                
+            }
+            OnStateChanged();
+        }
+    }
+
+    private HashSet<State> possible_States;
 
 
     // ************* SCRIPTS *************
+
     [SerializeField] private MonoBehaviour[] movementScripts;
     [SerializeField] private MonoBehaviour idle;
+    [SerializeField] private bool idleOnGroundOnly;
     [SerializeField] private MonoBehaviour[] attackScripts; // contact damage is always applied, so does not take part in this array
     [SerializeField] private MonoBehaviour chaseScript;
 
     // When chasing is implemented, it will need the use of the latest movement script to 'chase' the player with that movement. All the chasing script affects is direction
-    private MonoBehaviour activeScript;
-    private IMovementScript currentMovement;
+
+    [Tooltip("Current movement script")] private IMovementScript currentMovement;
+
+    private float currentMinTime;
+    private float currentMaxTime;
+    private float chosenTime;
+    [Tooltip("States: \n Default - timer to switch to idle state \n Idle - timer to switch to default state \n Chase - timer to switch back to default state")] private float timer;
+
+    private MonoBehaviour _activeScript;
+    [Tooltip("Which non-movement script is currently active. Null otherwise")] private MonoBehaviour activeScript
+    {
+        get { return _activeScript;  }
+        set {
+            if (_activeScript != value)
+            {
+                if (_activeScript != null)
+                    _activeScript.enabled = false;
+
+                _activeScript = value;
+
+                if (_activeScript != null)
+                    _activeScript.enabled = true;                        
+                
+                
+            }
+        }
+    }  
+    
+
 
     // ************* STATS **************
     public enum Type
     {
         Ground,
-        Flying, 
-        Mix
+        Flying
     }
 
-    public Type type;
+    private Type currentType;
     private Vector2 direction; // Either left/right/up/down. Up and down only possible in certain conditions such as using a ladder to chase the player upwards
-    private float distanceFromGround; // only for ground enemies
 
     private BoxCollider2D boxCollider;
 
@@ -61,50 +117,153 @@ public class Enemy_Behaviour : MonoBehaviour
     LayerMask groundLayer;
     LayerMask playerLayer;
 
-
     // Start is called before the first frame update
     void Start()
     {
-        activeScript = idle;
+        activeScript = null;
         disableScripts();
+        getPossibleStates();
 
         groundLayer = LayerMask.GetMask("Ground");
         playerLayer = LayerMask.GetMask("Player");
 
         boxCollider = GetComponent<BoxCollider2D>();
 
-
-        currentState = State.Default;
-        chooseDirection();
-        chooseMovementScript(); // Everything starts in 'default' state
+        // Big problem with random is that all instances of random in all of the enemies are using the same seed. With the same seed, the same set of numbers occur
+        // To fix this, we need a separate seed per script instance, and do this by setting the seed of random to a unique value based on the current time and the instance ID of the script
+        random = new System.Random(DateTime.Now.Millisecond + GetInstanceID());
         
+        if (possible_States.Contains(State.Default))
+        {
+            currentState = State.Default;
+        }
+        else if (possible_States.Contains(State.Idle))
+        {
+            currentState = State.Idle;
+            currentType = Type.Flying; // Idle at the start makes enemy stay in mid-air
+            chooseDirection();
+        }
+        else {
+            throw new Exception("Must have at least either movement or idle script attached");
+        }
+        //OnStateChanged(); // Calls to start the whole script activation process
     }
 
     // Update is called once per frame
     void Update()
     {
+        timer += Time.deltaTime;
         switch (currentState)
-        {
+        {   // Default, Idle and Chase must always have seePlayer on, in order to chase the player
             case State.Default:
-                normalBehaviour(currentMovement.distanceFromGround());
+                defaultBehaviour(currentMovement.distanceFromGround());
+                break;
+            case State.Idle:
+                idleBehaviour();
                 break;
             case State.Chase:
+                chaseBehaviour();
                 break;
             case State.Attack:
+                attackBehaviour();
                 break;
         }
     }
 
+
+
+    // ******************************************************************** SCRIPTS *********************************************************************
     void disableScripts()
     {
         foreach (MonoBehaviour script in movementScripts)
             script.enabled = false;
-        idle.enabled = false;
+        if (idle != null)
+            idle.enabled = false;
         //foreach (MonoBehaviour script in attackScripts)
             //script.enabled = false;
-        //chaseScript.enabled = false;
+        if (chaseScript != null)
+            chaseScript.enabled = false;
 
     }
+
+    void getPossibleStates()
+    {
+        possible_States = new HashSet<State>();
+        if (movementScripts.Length != 0)
+            possible_States.Add(State.Default);
+        if (idle != null)
+            possible_States.Add(State.Idle);
+        if (chaseScript != null)
+            possible_States.Add(State.Chase);
+        if (attackScripts.Length != 0)
+            possible_States.Add(State.Attack);
+    }
+
+    void getNextState(State nextState, State ifFirstNotPossible)
+    {
+        if (possible_States.Contains(nextState))
+            currentState = nextState;
+        else
+            currentState = ifFirstNotPossible;
+    }
+
+    void OnStateChanged()
+    {
+        timer = 0f;
+        switch (currentState)
+        {
+            case State.Default:
+
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = false;
+                chooseMovementScript();
+                chooseDirection();
+                activeScript = null;
+                (currentMovement as MonoBehaviour).enabled = true;
+
+                currentMinTime = currentMovement.minTime;
+                currentMaxTime = currentMovement.maxTime;
+
+                break;
+            case State.Idle:
+                activeScript = idle;
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = false;
+                currentMinTime = (idle as IMovementScript).minTime;
+                currentMaxTime = (idle as IMovementScript).maxTime;
+                break;
+            case State.Chase:
+                activeScript = chaseScript;
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = true;
+                currentMinTime = (chaseScript as IMovementScript).minTime;
+                currentMaxTime = (chaseScript as IMovementScript).maxTime;
+                break;
+            case State.Attack:
+                //chooseAttackScript();
+                if (currentMovement != null)
+                    (currentMovement as MonoBehaviour).enabled = false;
+                break;
+
+
+        }
+
+        float skewness = (currentMaxTime + currentMinTime) / 2;
+        if (random.NextDouble() > 0.35d)
+            currentMinTime = skewness;
+        else
+            currentMaxTime = skewness;
+        chosenTime = (float) random.NextDouble() * (currentMaxTime - currentMinTime) + currentMinTime;
+        
+
+    }
+
+    public bool isDefault()
+    {
+        return currentState == State.Default;
+    }
+
+
 
     /*
      * Movement script conditions: 
@@ -118,8 +277,12 @@ public class Enemy_Behaviour : MonoBehaviour
     {
         if (movementScripts.Length == 1)
         {
-            activeScript = (MonoBehaviour)movementScripts[0];
-            activeScript.enabled = true;
+            currentMovement = (IMovementScript) movementScripts[0];
+            switch (currentMovement.isFlying)
+            {
+                case true: currentType = Type.Flying; break;
+                case false: currentType = Type.Ground; break;
+            }
             return;
         }
 
@@ -128,6 +291,11 @@ public class Enemy_Behaviour : MonoBehaviour
         // only canRepeat is a condition that can remove the possibility of a script being chosen. 
         foreach (IMovementScript script in movementScripts)
         {
+            if (currentMovement == null)
+            {
+                possibilities.Add(script);
+                continue;
+            }
 
             if (script.canRepeat)
             {
@@ -140,25 +308,133 @@ public class Enemy_Behaviour : MonoBehaviour
         }
         int randomIndex = Random.Range(0, possibilities.Count);
         IMovementScript chosen = possibilities[randomIndex];
+        switch (chosen.isFlying)
+        {
+            case true: currentType = Type.Flying; break;
+            case false: currentType = Type.Ground; break;
+        }
 
-        activeScript.enabled = false;
-        activeScript = (MonoBehaviour) chosen;
-        activeScript.enabled = true;
         currentMovement = chosen;
     }
 
-    void chooseDirection()
+    void chooseAttackScript()
+    {
+
+    }
+    private void defaultBehaviour(float extra = 0.0f)
+    {
+        
+        switch (currentType)
+        {
+            case Type.Ground:
+                if (isGrounded() && timeTillChangeState())
+                {
+                    getNextState(State.Idle, State.Default);
+                }
+                    
+
+                if (!isGrounded(extra) || isWalled())
+                {
+                    Flip();
+                }
+                break;
+
+            case Type.Flying:
+                if (idleOnGroundOnly)
+                {
+                    if (isGrounded() && timeTillChangeState())
+                    {
+                        getNextState(State.Idle, State.Default);
+                    }
+                        
+                }
+                else
+                {
+                    if (timeTillChangeState())
+                    {
+                        getNextState(State.Idle, State.Default);
+                    }
+                        
+                }
+                break;
+        }
+
+        if (possible_States.Contains(State.Chase) && seePlayer())
+            currentState = State.Chase;       
+        
+    }
+
+    private void idleBehaviour()
+    {
+        if (timeTillChangeState())
+        {
+            getNextState(State.Default, State.Idle);
+        }
+        if (possible_States.Contains(State.Chase) && seePlayer())
+            currentState = State.Chase;
+    }
+
+    private void chaseBehaviour()
+    {
+        
+        if (seePlayer()) // resets to 0 if sees the player
+            timer = 0f;
+
+        switch (currentType)
+        {
+            case Type.Ground:
+                if (isGrounded() && timeTillChangeState())
+                {
+                    getNextState(State.Idle, State.Default);
+                }
+                break;
+            case Type.Flying:
+                if (timeTillChangeState())
+                    getNextState(State.Idle, State.Default);
+                break;
+                
+        }
+
+        
+        
+    }
+
+    private void attackBehaviour()
+    {
+        
+    }
+
+    public void stopMovement() // Stops all movement (does not change to idle, just stops movement)
+    {
+        (currentMovement as MonoBehaviour).enabled = false;
+    }
+
+    public void continueMovement()
+    {
+        (currentMovement as MonoBehaviour).enabled = true;
+    }
+
+
+    private bool timeTillChangeState()
     {   
-        switch (type)
+        if (timer >= chosenTime)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    // ************************************************************************************ STATS ****************************************************************************
+    void chooseDirection()
+    {
+        
+        switch (currentType)
         {
             case Type.Ground: // direction either left or right. Up/down only possible for those who can climb ladders, and only when next to a ladder. 
                 direction = new Vector2(Random.Range(-1f, 1f), 0f).normalized;
                 break;
             case Type.Flying: // any direction
                 direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized; 
-                break;
-            case Type.Mix: // must first determine whether in ground state or flying state via active movement 
-                
                 break;
         }
     }
@@ -169,6 +445,25 @@ public class Enemy_Behaviour : MonoBehaviour
         return direction;
     }
 
+    public void setDirection(Vector2 direction)
+    {
+        if (this.direction.x == direction.x * -1)
+            Flip();
+        this.direction = direction;
+    }
+
+    public float getDistanceFromGround()
+    {
+        return currentMovement.distanceFromGround();
+    }
+
+    public bool isFlying()
+    {
+        if (currentType == Type.Flying)
+            return true;
+        return false;
+    }
+
     // extraRayDistance: extra distance added to the ray say if the enemy is jumping off the ground
     public bool isGrounded(float extraRayDistance = 0.0f) // Checks if the enemy is on the ground of not
     {
@@ -177,116 +472,95 @@ public class Enemy_Behaviour : MonoBehaviour
         ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2); // Places the x position to the front of the enemy depending on direction
         ray_Position.y -= boxCollider.size.y / 2 - boxCollider.offset.y;
 
-        // Direction and distance of downwards ray
+        // Direction and distance of downwards ray 
         Vector2 ray_Direction = Vector2.down;
-        float ray_Distance = 0.1f + extraRayDistance;
+        float ray_Distance = 0.2f + extraRayDistance;
 
-        RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer); // May have to change to a boxcast **********************************
+        Vector2 box_Size = new Vector2(boxCollider.size.x, 0.01f);
+
+        RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer);
 
         if (checkForGround.collider != null)
             return true;
         return false;
+
+        
     }
 
-    public bool isWalled()
+    public bool isWalled(float extraRayDistance = 0.0f)
     {
         Vector2 ray_Position = transform.position;
         ray_Position.x += boxCollider.offset.x + direction.x * (boxCollider.size.x / 2);
-        //ray_Position.y += boxCollider.offset.y;
+        ray_Position.y += boxCollider.offset.y;
 
-        Vector2 ray_Direction = direction * Vector2.right;
-        float ray_Distance = 0.05f;
+        Vector2 ray_Direction = direction;
+        float ray_Distance = 0.05f + extraRayDistance;
 
-        Vector2 ray_Size = new Vector2(0.4f, boxCollider.size.y);
+        Vector2 box_Size = new Vector2(0.4f, boxCollider.size.y);
 
-        RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, ray_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
-
+        RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, box_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
+        
         if (checkForWall.collider != null)
             return true;
 
         return false;
     }
 
-    public bool seePlayer()
+    public bool seePlayer() // sending 3 rays in a triangle like shape to detect the player
     {
 
         Vector2 ray_Position = transform.position;
         ray_Position.x += direction.x * (boxCollider.offset.x + boxCollider.size.x / 2);
+        ray_Position.y += direction.y * (boxCollider.offset.y + boxCollider.size.y / 2);
 
-        Vector2 ray_Direction = direction * Vector2.right;
+        Vector2 ray_Direction = direction;
         float ray_Distance = 4.0f;
 
-        RaycastHit2D checkForPlayer = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, playerLayer);
+        float angleBetweenRays = 10.0f;
 
-        if (checkForPlayer.collider != null)
-            return true;
+        int layerMask = LayerMask.GetMask("Player", "Ground"); // So that raycasts cant go through the ground
+
+        RaycastHit2D hit = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, layerMask);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                return true;
+            }
+        }
+        hit = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, angleBetweenRays) * ray_Direction, ray_Distance, layerMask);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                return true;
+            }
+        }
+        hit = Physics2D.Raycast(ray_Position, Quaternion.Euler(0, 0, -angleBetweenRays) * ray_Direction, ray_Distance, layerMask);
+        if (hit.collider != null)
+        {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+            {
+                return true;
+            }
+        }
+        
         return false;
     }
 
     public void Flip() // Must be updated to physically flip the enemy, as well as not flip the health bar
     {
-        direction *= -1;
+
+        switch (currentType)
+        {
+            case Type.Ground:
+                direction.x *= -1;
+                break;
+        }
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
     }
-
-    private void normalBehaviour(float extra = 0.0f)
-    {
-        if (!isGrounded(extra) || isWalled())
-        {
-            Flip();
-        }
-    }
-
-    private void chasingBehaviour()
-    {
-
-    }
-    
-    private void attackBehaviour()
-    {
-
-    }
-
-
-
-
-    //// ********************************** WORK ON
-    ///
-    /*public float minTime = 0f;
-    public float maxTime = 1f;
-    public float probabilityAtMinTime = 0f;
-    public float probabilityAtMaxTime = 1f;
-
-    private bool myBool = false;
-
-    private IEnumerator Start()
-    {
-        while (true)
-        {
-            float t = 0f;
-
-            while (t < maxTime)
-            {
-                t += Time.deltaTime;
-
-                if (t >= minTime && !myBool)
-                {
-                    float probability = Mathf.InverseLerp(minTime, maxTime, t);
-                    if (Random.value < probability)
-                    {
-                        myBool = true;
-                        yield return new WaitForSeconds(1f);
-                        myBool = false;
-                        break;
-                    }
-                }
-
-                yield return null;
-            }
-        }
-    }*/
 
 
 }
