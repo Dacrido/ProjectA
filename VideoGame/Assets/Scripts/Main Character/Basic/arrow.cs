@@ -43,18 +43,9 @@ public class arrow : MonoBehaviour
         maxHeight = transform.position.y;
     }
 
-    void Update()
-    {
-        
-    }
-
     private void FixedUpdate() {
-        x_velocity = speed * direction;
         
-        rb.velocity = new Vector2(x_velocity, x_velocity*0.08f); 
-        Debug.Log(transform.position.y);
-        Debug.Log(rb.velocity.y);
-
+        rb.velocity = new Vector2(direction * speed, rb.velocity.y);
          
     }
 
@@ -67,12 +58,7 @@ public class arrow : MonoBehaviour
         if (otherObj.gameObject.tag == "Enemy")
         {
             health = otherObj.gameObject.GetComponent<EnemyHealth>();
-            
-            if (big_arrow)
-            {
-                health.takeDamage(damage);
-                return;
-            }
+                    
             Destroy(gameObject);
             health.takeDamage(damage);
 
