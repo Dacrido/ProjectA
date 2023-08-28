@@ -11,7 +11,7 @@ public class EnemyHealth : MonoBehaviour
 
     public int maxHealth;
     [HideInInspector] public int currentHealth;
-    [HideInInspector] public UnityEvent onHealthChange;
+    [HideInInspector] public UnityEvent<bool> onHealthChange;
     [HideInInspector] public UnityEvent deleteHealthBar;
 
     // Start is called before the first frame update
@@ -22,7 +22,7 @@ public class EnemyHealth : MonoBehaviour
         healthManager.CreateHealthBar(gameObject);
         
         currentHealth = maxHealth;
-        onHealthChange.Invoke();
+        onHealthChange.Invoke(false);
     }
 
     public void takeDamage(int damage)
@@ -36,7 +36,7 @@ public class EnemyHealth : MonoBehaviour
             Destroy(gameObject);
         }
 
-        onHealthChange.Invoke();
+        onHealthChange.Invoke(true);
 
     }
 
@@ -49,7 +49,7 @@ public class EnemyHealth : MonoBehaviour
             currentHealth = maxHealth;
         }
 
-        onHealthChange.Invoke();
+        onHealthChange.Invoke(false);
     }
     
 }
