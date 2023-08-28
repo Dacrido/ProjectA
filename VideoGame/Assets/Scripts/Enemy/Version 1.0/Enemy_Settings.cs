@@ -34,5 +34,5 @@ public interface IMovementScript // Interface for all movement scripts
     bool needsLadder { get; }
     bool isFlying    { get; }
 
-    float distanceFromGround(); 
+    float distanceFromGround();
 }
