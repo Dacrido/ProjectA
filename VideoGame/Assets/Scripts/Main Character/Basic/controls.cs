@@ -34,8 +34,8 @@ public class controls : MonoBehaviour
     // dash
     private bool canDash = true;
     public bool isDashing;
-    private float dashPower = 18.5f;
-    private float dashTime = 0.2f;
+    private float dashPower = 21f;
+    private float dashTime = 0.21f;
     private float dashCooldown = 0.6f;
 
 
@@ -135,8 +135,7 @@ public class controls : MonoBehaviour
         if (aim_mode)
         {                     
             vertical_input = Input.GetAxis("Vertical");  
-                        
-            
+     
         }
 
 
@@ -214,9 +213,9 @@ public class controls : MonoBehaviour
         
         yield return new WaitForSeconds(dashTime); // dash for x seconds
         Physics2D.IgnoreLayerCollision(3, 7, false); // stop phasing
-        rb.gravityScale = originalGravity; 
         isDashing = false;
         yield return new WaitForSeconds(dashCooldown); //can't dash while cooldown
+        rb.gravityScale = originalGravity; 
         canDash = true;
     }
 

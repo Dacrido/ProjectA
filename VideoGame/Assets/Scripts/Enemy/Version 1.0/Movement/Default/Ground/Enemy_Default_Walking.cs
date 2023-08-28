@@ -48,15 +48,20 @@ public class Enemy_Default_Walking : MonoBehaviour, IMovementScript // Maybe ext
     [SerializeField] private float speed;
 
     // Start is called before the first frame update    
-    void Start()
+    void Awake()
     {
         needsLadder = false;
         isFlying = false;
 
         rb = GetComponent<Rigidbody2D>();
         General = GetComponent<Enemy_Behaviour>();
+    }
 
-    }    
+    private void OnEnable()
+    {   
+        if (rb != null)
+            rb.gravityScale = 1;
+    }
 
     void FixedUpdate()
     {

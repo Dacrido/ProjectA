@@ -23,6 +23,7 @@ public class healPotion : MonoBehaviour
     { // check for any colision
           
         health.Heal(1);
+        Debug.Log("healed");
         Destroy(this.gameObject);
     }
 }

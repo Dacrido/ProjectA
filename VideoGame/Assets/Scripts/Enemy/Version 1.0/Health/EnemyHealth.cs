@@ -11,8 +11,8 @@ public class EnemyHealth : MonoBehaviour
 
     public int maxHealth;
     [HideInInspector] public int currentHealth;
-    public UnityEvent onHealthChange;
-    public UnityEvent deleteHealthBar;
+    [HideInInspector] public UnityEvent onHealthChange;
+    [HideInInspector] public UnityEvent deleteHealthBar;
 
     // Start is called before the first frame update
     void Start() // This is current health for enemies. When activated/spawned, whenever entering a new area, they start with max health
@@ -39,7 +39,7 @@ public class EnemyHealth : MonoBehaviour
         onHealthChange.Invoke();
 
     }
-    
+
     public void healHealth(int health)
     {
         currentHealth += health;
