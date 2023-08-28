@@ -31,7 +31,7 @@ public class FillStatusBar : MonoBehaviour
         slider.gameObject.SetActive(false);
     }    
 
-    public void UpdateHealthBar()
+    public void UpdateHealthBar(bool hit)
     {   
 
         // The following isnt needed as when the health bar reaches 0, the enemy is deleted and so is the health bar. Serves no purpose. 
