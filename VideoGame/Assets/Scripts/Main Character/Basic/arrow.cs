@@ -46,7 +46,10 @@ public class arrow : MonoBehaviour
     private void FixedUpdate() {
         
         rb.velocity = new Vector2(direction * speed, rb.velocity.y);
-         
+        
+        if (time_counter < 2.5) time_counter += Time.deltaTime;
+
+        else Destroy(gameObject);
     }
 
     void OnCollisionEnter2D(Collision2D otherObj)
