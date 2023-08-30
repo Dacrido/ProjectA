@@ -389,7 +389,7 @@ public class Enemy_Behaviour : MonoBehaviour
         switch (currentType)
         {
             case Type.Ground:
-                if (isGrounded() && timeTillChangeState())
+                if (isGrounded(checkBothEnds: true) && timeTillChangeState())
                 {
                     getNextState(State.Idle, State.Default);
                 }
@@ -426,13 +426,15 @@ public class Enemy_Behaviour : MonoBehaviour
         }
     }
 
-    public void stopMovement() // Stops all movement (does not change to idle, just stops movement)
+    public void stopMovement() // Stops all movement (does not change to idle state, just stops movement)
     {
         (currentMovement as MonoBehaviour).enabled = false;
+        idle.enabled = true;
     }
 
     public void continueMovement()
     {
+        idle.enabled = false;
         (currentMovement as MonoBehaviour).enabled = true;
     }
 
@@ -487,7 +489,7 @@ public class Enemy_Behaviour : MonoBehaviour
     }
 
     // extraRayDistance: extra distance added to the ray say if the enemy is jumping off the ground
-    public bool isGrounded(float extraRayDistance = 0.0f) // Checks if the enemy is on the ground of not
+    public bool isGrounded(float extraRayDistance = 0.0f, bool checkBothEnds = false) // Checks if the enemy is on the ground of not
     {
         // Getting position of downwards ray
         Vector2 ray_Position = transform.position;
@@ -501,9 +503,17 @@ public class Enemy_Behaviour : MonoBehaviour
         Vector2 box_Size = new Vector2(boxCollider.size.x, 0.01f);
 
         RaycastHit2D checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer);
-
         if (checkForGround.collider != null)
             return true;
+
+        if (checkBothEnds)
+        {
+            ray_Position.x -= 2 * (boxCollider.offset.x + direction.x * (boxCollider.size.x / 2));
+
+            checkForGround = Physics2D.Raycast(ray_Position, ray_Direction, ray_Distance, groundLayer);
+            if (checkForGround.collider != null)
+                return true;
+        }
         return false;
 
         

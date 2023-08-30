@@ -34,16 +34,18 @@ public class Enemy_IDLE : MonoBehaviour, IMovementScript
 
 
     private Rigidbody2D rb;
+    private Enemy_Behaviour General;
 
     // Start is called before the first frame update
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();        
+        rb = GetComponent<Rigidbody2D>(); 
+        General = rb.GetComponent<Enemy_Behaviour>();
     }
 
     private void OnEnable()
     {
-        if (rb != null)
+        if (rb != null && General.isFlying())
             rb.gravityScale = 0;
     }
 

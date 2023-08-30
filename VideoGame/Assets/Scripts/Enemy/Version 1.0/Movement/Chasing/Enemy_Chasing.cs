@@ -169,7 +169,18 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
         } else
         {
             
-            if (!General.isGrounded(General.getDistanceFromGround()))
+            /* If player falling as enemy reaches edge of a platform, enemy follows if 
+             * 1. x distance close (within bounds)
+             * 2. player is not above the enemy, but falling downwards. 
+             * 3. If 2nd condition not met, check if player has fallen downwards a short distance, like on a hill to the ground, then follow
+             * 
+             * If not met, enemy stops and waits Chase out. If player reenters line of sight, calculation repreformed
+             * 
+             * if enemy reaches a wall, he stops and waits at the wall the whole chase scene, unless he is damaged by player, in which
+             * a recalculation of the situation ensues
+
+            */
+            if (!General.isGrounded(General.getDistanceFromGround())) 
             {
                 if (transform.position.y - yFollowDistance > target.position.y)
                     General.stopMovement();
