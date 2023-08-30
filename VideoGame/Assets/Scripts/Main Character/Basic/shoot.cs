@@ -34,8 +34,7 @@ public class shoot : MonoBehaviour
 
         if (Time.time >= nextAttackTime){
             if (Input.GetKeyUp(KeyCode.F)){
-                Debug.Log("Shoot");
-                Shoot();
+                StartCoroutine(Shoot());
                 nextAttackTime = Time.time + 1f/attackRate;
             }
 
@@ -43,9 +42,14 @@ public class shoot : MonoBehaviour
             
         }
     }
+    public IEnumerator Shoot(){
+        animator.SetTrigger("shoot");
+        yield return new WaitForSeconds(20f/60f);
+        ReleaseArrow();
 
+    }
 
-    public void Shoot()
+    public void ReleaseArrow()
     {
         if (attackpoint != null) Instantiate(equipped_arrow, attackpoint.position, attackpoint.rotation);
     
