@@ -44,7 +44,7 @@ public class shoot : MonoBehaviour
     }
     public IEnumerator Shoot(){
         animator.SetTrigger("shoot");
-        yield return new WaitForSeconds(0.17f);
+        yield return new WaitForSeconds(20f/60f);
         ReleaseArrow();
 
     }
