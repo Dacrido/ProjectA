@@ -11,12 +11,14 @@ public class controls : MonoBehaviour
     private float horizontal; 
     //smoother movement using acceleration/deceleration system
     private float acceleration_rate = 50f;
-    private float acceleration_time = 0.15f;
+
     private float time_counter;  
     private float currentSpeed;  
     private float maxSpeed = 5.5f;
-    private float deceleration_time;
-    private float deceleration_rate = 27.5f;
+    
+    [System.NonSerialized] public bool isFalling;
+    private float Velocity_lastFrame_y;
+
 
     // 
     //jump
@@ -62,7 +64,7 @@ public class controls : MonoBehaviour
     {
         currentSpeed = 0f;
         time_counter = 0f;
-        
+        Velocity_lastFrame_y = rb.velocity.y;
     }
 
     // Update is called once per frame
@@ -183,7 +185,19 @@ public class controls : MonoBehaviour
           
 
         anim.SetFloat("speed", Mathf.Abs(horizontal));
-               
+
+
+        if (Mathf.Abs(rb.velocity.y) > Mathf.Abs(Velocity_lastFrame_y) && !IsGround()){
+            isFalling = true;
+            
+        }  
+
+        else {
+            isFalling = false;
+        }
+
+        
+        Velocity_lastFrame_y = rb.velocity.y;
 
     }
 
