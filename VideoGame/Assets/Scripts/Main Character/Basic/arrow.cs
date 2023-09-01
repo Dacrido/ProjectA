@@ -10,7 +10,7 @@ public class arrow : MonoBehaviour
 
     public float maxHeight;
     public Rigidbody2D rb;
-    public GameObject impact;
+    public bool impact;
     public GameObject player;
     
     public bool big_arrow = false; 
@@ -43,19 +43,15 @@ public class arrow : MonoBehaviour
         maxHeight = transform.position.y;
     }
 
-    void Update()
-    {
-        
-    }
-
     private void FixedUpdate() {
-        x_velocity = speed * direction;
         
-        rb.velocity = new Vector2(x_velocity, x_velocity*0.08f); 
-        Debug.Log(transform.position.y);
-        Debug.Log(rb.velocity.y);
+        if (!impact) rb.velocity = new Vector2(direction * speed, rb.velocity.y);
+        
+        if (impact) rb.velocity = new Vector2(0f,0f);
 
-         
+        if (time_counter < 2.5) time_counter += Time.deltaTime;
+
+        else Destroy(gameObject);
     }
 
     void OnCollisionEnter2D(Collision2D otherObj)
@@ -66,15 +62,10 @@ public class arrow : MonoBehaviour
         
         if (otherObj.gameObject.tag == "Enemy")
         {
-            health = otherObj.gameObject.GetComponent<EnemyHealth>();
-            
-            if (big_arrow)
-            {
-                health.takeDamage(damage);
-                return;
-            }
-            Destroy(gameObject);
+            health = otherObj.gameObject.GetComponent<EnemyHealth>();         
             health.takeDamage(damage);
+            impact = true;
+            Destroy(gameObject);
 
         }
 
