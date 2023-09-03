@@ -11,7 +11,12 @@ public class portal : MonoBehaviour
     public GameObject text;
 
     public int Level;
+
+    
+
+
     private void Update(){
+
         if (text != null){
             
             if (collided) text.gameObject.SetActive(true);
@@ -21,7 +26,9 @@ public class portal : MonoBehaviour
 
         if (collided && Input.GetKeyDown(KeyCode.E))
         {
-            if (Level != null) LoadLevel(Level);
+            if (Level != null) {  
+                LoadLevel(Level);
+            }
         }
     }
 
@@ -46,5 +53,8 @@ public class portal : MonoBehaviour
         SceneManager.LoadScene(sceneANumber+1);
     }
 
+    IEnumerator Wait(float time){
+        yield return new WaitForSeconds(time);
+    }
     
 }

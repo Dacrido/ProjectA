@@ -15,6 +15,8 @@ public class player_health : MonoBehaviour
     public Image[] lives;
     public Sprite fullLives;
     public Sprite noLives;
+
+    public GameObject youDied;
     // Start is called before the first frame update
     
     private float damage_cd;
@@ -48,6 +50,7 @@ public class player_health : MonoBehaviour
         if (HEALTH <= 0f) 
         {
             Debug.Log("You Died!");
+            youDied.SetActive(true);
             gameObject.active = false;
 
         }

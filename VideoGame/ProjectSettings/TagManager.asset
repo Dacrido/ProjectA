@@ -11,6 +11,9 @@ TagManager:
   - Map
   - Ladder
   - Arrow
+  - slot1
+  - slot2
+  - slot3
   layers:
   - Default
   - TransparentFX
