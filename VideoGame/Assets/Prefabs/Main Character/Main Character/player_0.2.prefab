@@ -1207,7 +1207,7 @@ GameObject:
   - component: {fileID: 4291932771333502927}
   m_Layer: 3
   m_Name: slot3
-  m_TagString: Untagged
+  m_TagString: slot3
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1823,7 +1823,7 @@ GameObject:
   - component: {fileID: 4291932772272810670}
   m_Layer: 3
   m_Name: slot1
-  m_TagString: Untagged
+  m_TagString: slot1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1991,7 +1991,7 @@ GameObject:
   - component: {fileID: 4291932772557894071}
   m_Layer: 3
   m_Name: slot2
-  m_TagString: Untagged
+  m_TagString: slot2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2841,6 +2841,7 @@ MonoBehaviour:
   - {fileID: 4291932771174003036}
   fullLives: {fileID: 21300000, guid: ed34c13ecf4083f42a5a93358a3a5ba1, type: 3}
   noLives: {fileID: 21300000, guid: fee4fec015ab62947aa5c22d9284dd81, type: 3}
+  youDied: {fileID: 0}
 --- !u!114 &4647316347434355436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2875,6 +2876,7 @@ MonoBehaviour:
   - {fileID: 4291932772272810642}
   - {fileID: 4291932772557894075}
   - {fileID: 4291932771333502899}
+  call: 0
 --- !u!114 &7700785716408682967
 MonoBehaviour:
   m_ObjectHideFlags: 0
