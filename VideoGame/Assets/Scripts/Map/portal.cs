@@ -1,13 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class portal : MonoBehaviour
 {
     // Start is called before the first frame update
-    public bool collided = false;
+    [System.NonSerialized]public bool collided = false;
     public GameObject text;
+
+    public int Level;
+
+    
+
+
     private void Update(){
+
         if (text != null){
             
             if (collided) text.gameObject.SetActive(true);
@@ -17,7 +26,9 @@ public class portal : MonoBehaviour
 
         if (collided && Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("next");
+            if (Level != null) {  
+                LoadLevel(Level);
+            }
         }
     }
 
@@ -32,9 +43,18 @@ public class portal : MonoBehaviour
     public void OnTriggerExit2D(Collider2D col){
         if (col.gameObject.tag == "Player"){
             collided =false;
-            
-
+ 
         }
+    }
+
+    public void LoadLevel(int sceneANumber)
+    {
+        Debug.Log("sceneBuildIndex to load: " + sceneANumber);
+        SceneManager.LoadScene(sceneANumber+1);
+    }
+
+    IEnumerator Wait(float time){
+        yield return new WaitForSeconds(time);
     }
     
 }
