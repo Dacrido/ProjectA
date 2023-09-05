@@ -16,13 +16,11 @@ GameObject:
   - component: {fileID: 2565529196665595928}
   - component: {fileID: 2565529196665595929}
   - component: {fileID: 2565529196665595930}
-  - component: {fileID: 2565529196665595931}
   - component: {fileID: 2565529196665595938}
-  - component: {fileID: -259789290369102588}
   - component: {fileID: 2945144093493748399}
   - component: {fileID: -7276532781575663517}
   m_Layer: 7
-  m_Name: Testing
+  m_Name: Walker
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,8 +81,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -5177388603050735206, guid: 8884154dfe85442a3a3578be807dbcdf, type: 3}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 21300000, guid: 12b1434fb2da040478e9300a80d97d5e, type: 3}
   m_Color: {r: 0.6226415, g: 0.54870665, b: 0.2731399, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -129,18 +127,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.03002739, y: -0.032529593}
   m_SpriteTilingProperty:
-    border: {x: 0.25, y: 0.25, z: 0.25, w: 0.25}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.7777778, y: 1.7777778}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.690628, y: 1.3753419}
   m_EdgeRadius: 0
 --- !u!114 &2565529196665595935
 MonoBehaviour:
@@ -176,12 +174,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementScripts:
   - {fileID: 2565529196665595929}
-  - {fileID: 2565529196665595931}
   idle: {fileID: 2565529196665595930}
   idleOnGroundOnly: 1
   attackScripts: []
   chaseScript: {fileID: 2945144093493748399}
-  chaseAfterDamageTaken: 0
+  chaseAfterDamageTaken: 1
 --- !u!114 &2565529196665595929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,23 +209,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _minTime: 2
   _maxTime: 4
---- !u!114 &2565529196665595931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2565529196665595924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4382548f59ccbf4890f4c058af26caf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _minTime: 2
-  _maxTime: 15
-  _canRepeat: 1
-  speed: 4
-  jumpPower: 4
 --- !u!114 &2565529196665595938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,22 +222,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
---- !u!114 &-259789290369102588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2565529196665595924}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bec962b325822fd40b081fd7afe4052f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _minTime: 2
-  _maxTime: 16
-  _canRepeat: 0
-  speed: 3
 --- !u!114 &2945144093493748399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,8 +234,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30b76c4df43bb46862190e54d173dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minTime: 2
-  _maxTime: 4
+  _minTime: 10
+  _maxTime: 12
   yFollowDistance: 2
   xFollowDistance: 2
 --- !u!114 &-7276532781575663517

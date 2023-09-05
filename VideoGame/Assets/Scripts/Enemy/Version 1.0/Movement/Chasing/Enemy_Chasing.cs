@@ -37,6 +37,7 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
 
     [Header("Pathfinding")]
     private Transform target;
+    private controls targetControls;
     //public float activateDistance = 50f;
     private float pathUpdateSeconds = 0.3f;
 
@@ -50,6 +51,7 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
     private Vector2 collisionPosition;
     private bool collided;
 
+    float timer = 0f;
     public float yFollowDistance;
     public float xFollowDistance;
 
@@ -69,6 +71,7 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
     public void Start()
     {
         target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        targetControls = target.GetComponent<controls>();
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         General = GetComponent<Enemy_Behaviour>();
@@ -168,26 +171,58 @@ public class Enemy_Chasing : MonoBehaviour, IMovementScript
             }
         } else
         {
-            
-            if (!General.isGrounded(General.getDistanceFromGround()))
-            {
-                if (transform.position.y - yFollowDistance > target.position.y)
-                    General.stopMovement();
-                else if (transform.position.x + xFollowDistance < target.position.x)
-                    General.stopMovement();
-                else if (transform.position.x - xFollowDistance > target.position.x)
-                    General.stopMovement();
-            } else
-            {
-                Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
-                General.setDirection(direction);
-            }
-            
-            
-        }
-        
 
-        
+            /* If player falling as enemy reaches edge of a platform, enemy follows if 
+             * 1. x distance close (within bounds)
+             * 2. player is not above the enemy, but falling downwards. 
+             * 3. If 2nd condition not met, check if player has fallen downwards a short distance, like on a hill to the ground, then follow
+             * 
+             * If not met, enemy stops and waits Chase out. If player reenters line of sight, calculation repreformed
+             * 
+             * if enemy reaches a wall, he stops and waits at the wall the whole chase scene, unless he is damaged by player, in which
+             * a recalculation of the situation ensues
+
+            */
+            Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+            if (!(direction == Vector2.zero))
+            {
+                if (General.isWalled())
+                {
+                    General.stopMovement();
+                }
+
+                if (Vector2.Angle(direction, Vector2.up) < 15f)
+                {
+                    timer += Time.deltaTime;
+                    if (timer >= 1.5f)
+                    {
+                        General.stopMovement();
+                    }
+                    
+                } else
+                {
+                    timer = 0f;
+                }
+                
+                if (!General.isGrounded(General.getDistanceFromGround()))
+                {
+                    if (target.position.x > transform.position.x + xFollowDistance || target.position.x < transform.position.x - xFollowDistance)
+                    {
+                        General.stopMovement();
+                    } else if (!(targetControls.isFalling && transform.position.y > target.position.y))
+                    {
+                        General.stopMovement();
+                    }
+
+                }
+                
+            }
+
+            General.setDirection(new Vector2(System.Math.Sign(direction.x), 0));
+        }
+
+
+
 
         //Vector2 force = direction * speed * Time.deltaTime;
 
