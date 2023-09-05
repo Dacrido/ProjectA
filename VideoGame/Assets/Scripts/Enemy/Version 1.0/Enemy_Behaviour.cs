@@ -71,6 +71,7 @@ public class Enemy_Behaviour : MonoBehaviour
     
     [SerializeField] private bool chaseAfterDamageTaken;
     private EnemyHealth enemy_health;
+    private Enemy_Collision_Damage enemy_collision;
 
     // When chasing is implemented, it will need the use of the latest movement script to 'chase' the player with that movement. All the chasing script affects is direction
 
@@ -136,6 +137,8 @@ public class Enemy_Behaviour : MonoBehaviour
 
         enemy_health = GetComponent<EnemyHealth>();
         enemy_health.onHealthChange.AddListener(enemyHealthChange);
+        enemy_collision = GetComponent<Enemy_Collision_Damage>();
+        enemy_collision.hitPlayer.AddListener(enemyHitPlayer);
 
         // Big problem with random is that all instances of random in all of the enemies are using the same seed. With the same seed, the same set of numbers occur
         // To fix this, we need a separate seed per script instance, and do this by setting the seed of random to a unique value based on the current time and the instance ID of the script
@@ -433,6 +436,19 @@ public class Enemy_Behaviour : MonoBehaviour
                 case State.Idle: currentState = State.Chase; break;
             }
         }
+    }
+
+    private void enemyHitPlayer()
+    {
+        if (!chaseAfterDamageTaken)
+            return;
+
+        switch (currentState)
+        {
+            case State.Default:
+            case State.Idle: currentState = State.Chase; break;
+        }
+
     }
 
     public void stopMovement() // Stops all movement (does not change to idle state, just stops movement)
