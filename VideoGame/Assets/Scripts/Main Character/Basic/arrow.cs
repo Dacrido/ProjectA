@@ -17,6 +17,7 @@ public class arrow : MonoBehaviour
 
     private controls other;
     private EnemyHealth health;
+    private boss_health bossHealth;
 
     private int ammo;
 
@@ -64,6 +65,15 @@ public class arrow : MonoBehaviour
         {
             health = otherObj.gameObject.GetComponent<EnemyHealth>();         
             health.takeDamage(damage);
+            impact = true;
+            Destroy(gameObject);
+
+        }
+
+        if (otherObj.gameObject.tag == "Boss")
+        {
+            bossHealth = otherObj.gameObject.GetComponent<boss_health>();         
+            bossHealth.takeDamage(damage);
             impact = true;
             Destroy(gameObject);
 

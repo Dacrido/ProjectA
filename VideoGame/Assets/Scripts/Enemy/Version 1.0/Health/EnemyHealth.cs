@@ -37,7 +37,7 @@ public class EnemyHealth : MonoBehaviour
         }
 
         onHealthChange.Invoke(true);
-
+        
     }
 
     public void healHealth(int health)
