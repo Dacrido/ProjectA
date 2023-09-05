@@ -52,6 +52,9 @@ public class Enemy_IDLE : MonoBehaviour, IMovementScript
     // Update is called once per frame
     void Update()
     {
-        rb.velocity = Vector2.zero;
+        if (General.isFlying())
+            rb.velocity = Vector2.zero;
+        else
+            rb.velocity = new Vector2(0, rb.velocity.y);
     }
 }

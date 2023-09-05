@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 2945144093493748399}
   - component: {fileID: -7276532781575663517}
   m_Layer: 7
-  m_Name: Testing
+  m_Name: Flyer
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

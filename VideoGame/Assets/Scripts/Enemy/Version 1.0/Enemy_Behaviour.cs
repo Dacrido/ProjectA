@@ -80,6 +80,7 @@ public class Enemy_Behaviour : MonoBehaviour
     private float currentMaxTime;
     private float chosenTime;
     [Tooltip("States: \n Default - timer to switch to idle state \n Idle - timer to switch to default state \n Chase - timer to switch back to default state")] private float timer;
+    private float extraTime = 0.0f;
 
     private MonoBehaviour _activeScript;
     [Tooltip("Which non-movement script is currently active. Null otherwise")] private MonoBehaviour activeScript
@@ -112,6 +113,7 @@ public class Enemy_Behaviour : MonoBehaviour
 
     private Type currentType;
     private Vector2 direction; // Either left/right/up/down. Up and down only possible in certain conditions such as using a ladder to chase the player upwards
+    private Vector2 previousDirection;
 
     private BoxCollider2D boxCollider;
 
@@ -138,7 +140,9 @@ public class Enemy_Behaviour : MonoBehaviour
         // Big problem with random is that all instances of random in all of the enemies are using the same seed. With the same seed, the same set of numbers occur
         // To fix this, we need a separate seed per script instance, and do this by setting the seed of random to a unique value based on the current time and the instance ID of the script
         random = new System.Random(DateTime.Now.Millisecond + GetInstanceID());
-        
+        direction = Vector2.left;
+        previousDirection = direction;
+
         if (possible_States.Contains(State.Default))
         {
             currentState = State.Default;
@@ -219,7 +223,8 @@ public class Enemy_Behaviour : MonoBehaviour
         switch (currentState)
         {
             case State.Default:
-
+                if (direction != Vector2.zero)
+                    previousDirection = direction;
                 if (currentMovement != null)
                     (currentMovement as MonoBehaviour).enabled = false;
                 chooseMovementScript();
@@ -232,6 +237,8 @@ public class Enemy_Behaviour : MonoBehaviour
 
                 break;
             case State.Idle:
+                if (direction != Vector2.zero)
+                    previousDirection = direction; // previous direction is the direction the enemy faced before idling
                 activeScript = idle;
                 if (currentMovement != null)
                     (currentMovement as MonoBehaviour).enabled = false;
@@ -260,6 +267,8 @@ public class Enemy_Behaviour : MonoBehaviour
         else
             currentMaxTime = skewness;
         chosenTime = (float) random.NextDouble() * (currentMaxTime - currentMinTime) + currentMinTime;
+        chosenTime += extraTime;
+        extraTime = 0f;
         
 
     }
@@ -348,7 +357,7 @@ public class Enemy_Behaviour : MonoBehaviour
             case Type.Flying:
                 if (idleOnGroundOnly)
                 {
-                    if (isGrounded() && timeTillChangeState())
+                    if (isGrounded(checkBothEnds: true) && timeTillChangeState())
                     {
                         getNextState(State.Idle, State.Default);
                     }
@@ -428,14 +437,8 @@ public class Enemy_Behaviour : MonoBehaviour
 
     public void stopMovement() // Stops all movement (does not change to idle state, just stops movement)
     {
-        (currentMovement as MonoBehaviour).enabled = false;
-        idle.enabled = true;
-    }
-
-    public void continueMovement()
-    {
-        idle.enabled = false;
-        (currentMovement as MonoBehaviour).enabled = true;
+        extraTime = chosenTime - timer;
+        getNextState(State.Idle, State.Default);
     }
 
 
@@ -455,12 +458,26 @@ public class Enemy_Behaviour : MonoBehaviour
         switch (currentType)
         {
             case Type.Ground: // direction either left or right. Up/down only possible for those who can climb ladders, and only when next to a ladder. 
-                direction = new Vector2(Random.Range(-1f, 1f), 0f).normalized;
+                direction = new Vector2(Random.Range(-1f, 1f), 0f);
+                if (direction.x >= 0)
+                {
+                    direction = new Vector2(1, 0);
+                } else
+                    direction = new Vector2(-1, 0);
+
                 break;
             case Type.Flying: // any direction
                 direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized; 
                 break;
         }
+
+        if (System.Math.Sign(previousDirection.x) *-1 == System.Math.Sign(direction.x))
+        {
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1;
+            transform.localScale = localScale;
+        }
+
     }
 
 
@@ -469,11 +486,22 @@ public class Enemy_Behaviour : MonoBehaviour
         return direction;
     }
 
-    public void setDirection(Vector2 direction)
+    public void setDirection(Vector2 direction) // only called from chase script
     {
-        if (this.direction.x == direction.x * -1)
-            Flip();
-        this.direction = direction;
+        if (this.direction != Vector2.zero)
+            previousDirection = this.direction;
+
+        if (System.Math.Sign(previousDirection.x) * -1 == System.Math.Sign(direction.x))
+        {
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1;
+            transform.localScale = localScale;
+        }
+
+        
+        this.direction = direction; 
+        
+
     }
 
     public float getDistanceFromGround()
@@ -531,7 +559,6 @@ public class Enemy_Behaviour : MonoBehaviour
         Vector2 box_Size = new Vector2(0.4f, boxCollider.size.y);
 
         RaycastHit2D checkForWall = Physics2D.BoxCast(ray_Position, box_Size, 0.0f, ray_Direction, ray_Distance, groundLayer); // Box cast so that an obstacle at any height compared to the enemy is detected
-        
         if (checkForWall.collider != null)
             return true;
 
