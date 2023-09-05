@@ -915,7 +915,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 346910087}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.497587, y: -3.322, z: -10}
+  m_LocalPosition: {x: -8.571111, y: -3.322, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2051,11 +2051,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 461e87433bd8af1479901aee6cbd455d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFull: 000000
-  slots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  collectedGems: 0
+  requiredCollection: 4
+  objectiveCompleted: 1
 --- !u!4 &868550247
 Transform:
   m_ObjectHideFlags: 0
@@ -2482,7 +2480,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051937426}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.9321947, y: 2.0184999, z: -10}
+  m_LocalPosition: {x: -2.6674328, y: 2.0184999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8148,5 +8146,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: portal
       objectReference: {fileID: 0}
+    - target: {fileID: 7051347726101727703, guid: e286f8bcb357b014082a4d432e23ff86, type: 3}
+      propertyPath: gameManager
+      value: 
+      objectReference: {fileID: 868550246}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e286f8bcb357b014082a4d432e23ff86, type: 3}

@@ -31,7 +31,6 @@ public class boss_health : MonoBehaviour
     public void Update(){
         player_currPosition_x = player.transform.position.x;
 
-        enemyDeath();
 
         if (death) return;
 
@@ -39,7 +38,7 @@ public class boss_health : MonoBehaviour
 
         else slider.gameObject.SetActive(true);
 
-        if (currHealth <= 0) enemyDeath();        
+        if (currHealth <= 0) StartCoroutine(enemyDeath());        
 
         slider.value = currHealth ;
 
@@ -50,11 +49,11 @@ public class boss_health : MonoBehaviour
         currHealth -= damage;
     }
 
-    public void enemyDeath(){
-        if (currHealth <= 0) 
-        {
-            death = true;
-            Destroy(gameObject);
-        }
+    public IEnumerator enemyDeath(){
+        
+        death = true;
+        yield return new WaitForSeconds(0.1f);
+        gameObject.SetActive(false);
+        
     }
 }

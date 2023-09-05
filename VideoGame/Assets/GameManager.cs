@@ -5,45 +5,24 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    public static GameManager Instance;
-
+    
+    private int collected;
+    public int required = 4;
+    public bool objectiveCompleted = false;
     private GameObject player;
     private itemInventory inventory;
 
-    public bool[] isFull;
-    public GameObject[] slots;
 
-    void Awake(){
-
-        Debug.Log("Loaded");
-        player = GameObject.FindGameObjectWithTag("Player");
-        inventory = player.GetComponent<itemInventory>();
-
-        if (Instance != null && Instance != this){
-            Destroy(gameObject);
-        }
-        else{
-            
-            Instance = this;
-            DontDestroyOnLoad(gameObject);    
-        }
-        
-    }
     void Update(){
-        
+        if (collected == required) objectiveCompleted = true; 
         
     }
-    public void updateInventory(){
-        player = GameObject.FindGameObjectWithTag("Player");
-        inventory = player.GetComponent<itemInventory>();
-        
-        for (int i = 0; i < slots.Length; i++){
-            isFull[i] = inventory.isFull[i];
-            slots[i] = inventory.slots[i].gameObject;
 
-        }
-
+    public void Collect(){
+        collected +=1;
     }
+    
+    
     
      
     

@@ -26,6 +26,8 @@ public class Boss_AI : MonoBehaviour
     public float attack_cd = 5f;
     private boss_health bossHealth;
     private GameObject playerObject;
+
+    public float riseSpeed = 2f;
     // Start is called before the first frame update
     void Start()
     {
@@ -93,6 +95,17 @@ public class Boss_AI : MonoBehaviour
         {
             isMoving = false;
         }
+
+        if (reachedEndofPath && IsTargetWithinGrid(target.position)) 
+        {   // if the enemy has reached the target and it within the range of the bounds
+                
+            if (!attacking && currTime >= attack_cd)
+            {
+                StartCoroutine(Attack());
+                currTime = 0f;         
+            }
+        }
+
         if (currWaypoint >= path.vectorPath.Count)
         {
             
@@ -115,11 +128,10 @@ public class Boss_AI : MonoBehaviour
             Flip(); // handles the direction the enemy is facing
 
         
-        float distance_player = transform.position.x - playerObject.transform.position.x;
-        if (Mathf.Abs(distance_player) > maxPlayerDist && currTime >= attack_cd){
+        /*float distance_player = transform.position.x - playerObject.transform.position.x;
+        if (Mathf.Abs(distance_player) > maxPlayerDist && currTime >= attack_cd && !attacking){
             StartCoroutine(Attack());
-        }
-
+        }*/
 
         if (!attacking) // handles enemy movement
         {  
@@ -143,13 +155,19 @@ public class Boss_AI : MonoBehaviour
     }
 
     IEnumerator Attack(){
-        Debug.Log("Attack!");
+        float dir;
         currTime = 0f;
         attacking = true;
-        
-        yield return new WaitForSeconds(2f);
+        float ogScale = rb.gravityScale;
+        rb.gravityScale = 0;
+        if (facingRight) dir = 1;
+        else dir = -1; 
+        rb.AddForce(new Vector2(30000f*dir, 15000f));
+        yield return new WaitForSeconds(0f);
+        rb.gravityScale = ogScale;
         attacking = false;
-
     }
+
+    
 
 }

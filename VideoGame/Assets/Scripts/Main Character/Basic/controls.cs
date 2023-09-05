@@ -36,7 +36,7 @@ public class controls : MonoBehaviour
     // dash
     private bool canDash = true;
     public bool isDashing;
-    private float dashPower = 21f;
+    private float dashPower = 30f;
     private float dashTime = 0.21f;
     private float dashCooldown = 0.6f;
 

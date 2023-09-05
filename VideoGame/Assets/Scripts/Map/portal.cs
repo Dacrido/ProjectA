@@ -12,7 +12,7 @@ public class portal : MonoBehaviour
 
     public int Level;
 
-    
+    public GameManager gameManager;
 
 
     private void Update(){
@@ -27,7 +27,8 @@ public class portal : MonoBehaviour
         if (collided && Input.GetKeyDown(KeyCode.E))
         {
             if (Level != null) {  
-                LoadLevel(Level);
+                
+                if (gameManager.objectiveCompleted) LoadLevel(Level);
             }
         }
     }
