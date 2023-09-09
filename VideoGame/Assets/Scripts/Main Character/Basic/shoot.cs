@@ -53,6 +53,5 @@ public class shoot : MonoBehaviour
     {
         if (attackpoint != null) Instantiate(equipped_arrow, attackpoint.position, attackpoint.rotation);
     
-        Debug.Log("attacked");
     } 
 }

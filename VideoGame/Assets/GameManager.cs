@@ -1,49 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 public class GameManager : MonoBehaviour
 {
 
-    public static GameManager Instance;
-
+    
+    private int collected;
+    public int required = 4;
+    public bool objectiveCompleted = false;
     private GameObject player;
     private itemInventory inventory;
 
-    public bool[] isFull;
-    public GameObject[] slots;
 
-    void Awake(){
+    public GameObject objective_UI;
+    public TextMeshProUGUI text;
+    public GameObject collected_UI;
 
-        Debug.Log("Loaded");
-        player = GameObject.FindGameObjectWithTag("Player");
-        inventory = player.GetComponent<itemInventory>();
+    public string objective_text;
 
-        if (Instance != null && Instance != this){
-            Destroy(gameObject);
+    void Awake()
+    {
+        if (collected_UI != null){
+
+            text = collected_UI.GetComponent<TextMeshProUGUI>();
+            objective_text = text.text;
         }
-        else{
-            
-            Instance = this;
-            DontDestroyOnLoad(gameObject);    
-        }
-        
     }
     void Update(){
+        if (collected == required) {
+            objectiveCompleted = true;
+        } 
         
-        
+        if (collected_UI != null && !objectiveCompleted) text.text = objective_text + collected.ToString();
+        else if (objectiveCompleted) text.text = "Objective Completed!\nHead to the exit";
     }
-    public void updateInventory(){
-        player = GameObject.FindGameObjectWithTag("Player");
-        inventory = player.GetComponent<itemInventory>();
-        
-        for (int i = 0; i < slots.Length; i++){
-            isFull[i] = inventory.isFull[i];
-            slots[i] = inventory.slots[i].gameObject;
 
-        }
-
+    public void Collect(){
+        collected +=1;
     }
+    
+    
     
      
     
