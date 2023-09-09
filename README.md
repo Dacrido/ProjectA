@@ -1,2 +1,3 @@
-# TeamGame
-Building a game as a team
+# ProjectA
+
+A 2D platformer game made in Unity!
