@@ -1259,7 +1259,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7051347726101727703, guid: e286f8bcb357b014082a4d432e23ff86, type: 3}
       propertyPath: Level
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7051347726101727703, guid: e286f8bcb357b014082a4d432e23ff86, type: 3}
       propertyPath: gameManager
@@ -1559,7 +1559,7 @@ MonoBehaviour:
   - Collect 4 Crystals
   completed:
   - 'Collected Crystals: '
-  mission_id: 0
+  mission_id: 1
 --- !u!4 &497066893
 Transform:
   m_ObjectHideFlags: 0

@@ -27,13 +27,22 @@ public class Trap : MonoBehaviour
         yield return new WaitForSeconds(time);
     }
     void OnTriggerEnter2D(Collider2D obj) {
-        if (obj.gameObject.tag == "Player")
+        if (anim != null && obj.gameObject.tag == "Player")
         {
             trap_activated = true;
             anim.SetTrigger("activated");
         }
 
         else trap_activated = false;
+
+    }
+
+    private void OnCollisionStay2D(Collision2D other) {
+        if (other.gameObject.tag == "Player")
+        {
+            Damage();
+            
+        }
 
     }
 
@@ -46,6 +55,8 @@ public class Trap : MonoBehaviour
     void DestroySelf() {
         Destroy(gameObject);
     }
+
+
 
 
 }

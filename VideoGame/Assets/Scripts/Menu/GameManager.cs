@@ -25,10 +25,14 @@ public class GameManager : MonoBehaviour
 
     private int current_objective_num;
 
+    private GameObject[] enemies;
+    private GameObject[] aliveEnemies;
+
     public int mission_id;
 
     void Awake()
     {
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
         if (collected_UI != null){
 
             text_completed = collected_UI.GetComponent<TextMeshProUGUI>();
@@ -39,17 +43,18 @@ public class GameManager : MonoBehaviour
     }
     void Update(){
 
-        localMission();
+        Debug.Log(collected);
+        if (!objectiveCompleted) localMission();
 
-        if (objective_text != null) text_objective.text = "Current Objective: " + objective_text + objectives[current_objective_num];
-
-        if (collected_UI != null && !objectiveCompleted) text_completed.text = completed[current_objective_num] + collected.ToString();
-
-        else if (objectiveCompleted)
+        if (objectiveCompleted)
         {
             text_completed.text = "Objective Completed!\nHead to the exit";
             text_objective.text = "No more objectives left";
         }
+
+        
+
+        
     }
 
     public void Collect(){
@@ -65,7 +70,11 @@ public class GameManager : MonoBehaviour
     }
 
     void localMission() {
+        
+        if (objective_text != null && !objectiveCompleted) text_objective.text = "Current Objective: " + objective_text + objectives[current_objective_num];
 
+        if (collected_UI != null && !objectiveCompleted) text_completed.text = completed[current_objective_num] + collected.ToString();
+        
         if (mission_id == 1) // collect 4 crystals
         {
             required = 4;
@@ -79,6 +88,9 @@ public class GameManager : MonoBehaviour
         else if (mission_id == 2) // kill 5 enemies
         {
             required = 5;
+            
+            collected = enemies.Length - getEnemies();
+
             if (collected == required) { 
                 complete_objective();
                 mission_id++;            
@@ -89,12 +101,18 @@ public class GameManager : MonoBehaviour
 
         else if (mission_id == 3) // kill the slime boss
         {
+            text_completed.text = completed[current_objective_num];
             
         }
         
 
     }
     
+
+    int getEnemies(){
+        aliveEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        return aliveEnemies.Length;
+    }
      
     
 }
