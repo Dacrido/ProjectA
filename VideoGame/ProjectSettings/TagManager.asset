@@ -15,6 +15,7 @@ TagManager:
   - slot2
   - slot3
   - Boss
+  - SpawnerMini
   layers:
   - Default
   - TransparentFX

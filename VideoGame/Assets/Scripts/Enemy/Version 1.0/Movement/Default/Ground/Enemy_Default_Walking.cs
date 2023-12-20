@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
+
 using UnityEngine;
 
 public class Enemy_Default_Walking : MonoBehaviour, IMovementScript // Maybe extend from general class? ***************************

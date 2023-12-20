@@ -5,6 +5,9 @@ using UnityEngine;
 public class shoot : MonoBehaviour
 {
     private float arrow_speed = 30f;
+
+    public float curr_dmg = 1;
+
     public GameObject default_arrow;
     public GameObject equipped_arrow;
 
@@ -14,6 +17,7 @@ public class shoot : MonoBehaviour
     private float nextAttackTime = 0f;
     public float attackRate = 1.8f;
    
+    public arrow container;
 
     [SerializeField] private Transform attackpoint; 
    // Start is called before the first frame update
@@ -51,7 +55,11 @@ public class shoot : MonoBehaviour
 
     public void ReleaseArrow()
     {
-        if (attackpoint != null) Instantiate(equipped_arrow, attackpoint.position, attackpoint.rotation);
-    
+        if (attackpoint != null) {
+            Instantiate(equipped_arrow, attackpoint.position, attackpoint.rotation);
+        }
+
     } 
+
+    
 }

@@ -29,13 +29,16 @@ public class Boss_AI : MonoBehaviour
 
     public float riseSpeed = 2f;
     // Start is called before the first frame update
-    void Start()
+    
+    
+    void Awake()
     {
         playerObject = GameObject.FindGameObjectWithTag("Player");
         target = playerObject.transform;
         seeker = GetComponent<Seeker>();
         rb = GetComponent<Rigidbody2D>();
         bossHealth = GetComponent<boss_health>();
+        bossHealth.slider.gameObject.SetActive(false);
         InvokeRepeating("UpdatePath", 0f, pathUpdateInterval);
     }
 
@@ -60,6 +63,7 @@ public class Boss_AI : MonoBehaviour
         return target.position.x >= minX && target.position.x <= maxX;
     }
 
+    
     void OnPathComplete(Path p) // AI stuff to calculate path
     {
         if (!p.error)
@@ -78,6 +82,7 @@ public class Boss_AI : MonoBehaviour
           
         if (path == null) return;
 
+        
         if (currTime < attack_cd) currTime += Time.deltaTime;
 
         if (bossHealth.death) 
@@ -145,6 +150,14 @@ public class Boss_AI : MonoBehaviour
             currWaypoint++;
         }
         
+        if (IsTargetWithinGrid(target.position)){
+            bossHealth.slider.gameObject.SetActive(true);
+            
+        }
+        else{
+            bossHealth.slider.gameObject.SetActive(false);
+            bossHealth.currHealth = bossHealth.maxHealth;
+        }
         
     }
 
