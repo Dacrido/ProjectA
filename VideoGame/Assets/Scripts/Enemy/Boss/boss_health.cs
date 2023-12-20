@@ -6,8 +6,8 @@ using TMPro;
 public class boss_health : MonoBehaviour
 {
     public Slider slider;
-    public int maxHealth;
-    public int currHealth;
+    public float maxHealth;
+    public float currHealth;
 
     [System.NonSerialized] public bool death = false;
 
@@ -34,10 +34,6 @@ public class boss_health : MonoBehaviour
 
         if (death) return;
 
-        if (player_currPosition_x < minBound.transform.position.x) slider.gameObject.SetActive(false);
-
-        else slider.gameObject.SetActive(true);
-
         if (currHealth <= 0) StartCoroutine(enemyDeath());        
 
         slider.value = currHealth ;
@@ -45,7 +41,7 @@ public class boss_health : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    public void takeDamage(int damage){
+    public void takeDamage(float damage){
         currHealth -= damage;
     }
 

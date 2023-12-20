@@ -5,7 +5,7 @@ using UnityEngine;
 public class arrow : MonoBehaviour
 {
     public float speed = 20f;
-    public int damage = 20;
+    public float damage;
     public float maxDistance = 30f;
 
     public float maxHeight;
@@ -26,12 +26,15 @@ public class arrow : MonoBehaviour
 
     private float x_velocity;
     private float yposition;
+
+    shoot sh;
     // Start is called before the first frame update
     void Awake(){
         player =  GameObject.FindGameObjectWithTag("Player");
 
         other = player.GetComponent<controls>(); 
-
+        sh = player.GetComponent<shoot>();
+        damage = sh.curr_dmg;
     }
     
     void Start()
@@ -64,7 +67,7 @@ public class arrow : MonoBehaviour
         if (otherObj.gameObject.tag == "Enemy")
         {
             health = otherObj.gameObject.GetComponent<EnemyHealth>();         
-            health.takeDamage(damage);
+            health.takeDamage((int)Mathf.Ceil(damage));
             impact = true;
             Destroy(gameObject);
 
@@ -74,6 +77,15 @@ public class arrow : MonoBehaviour
         {
             bossHealth = otherObj.gameObject.GetComponent<boss_health>();         
             bossHealth.takeDamage(damage);
+            impact = true;
+            Destroy(gameObject);
+
+        }
+
+        if (otherObj.gameObject.tag == "SpawnerMini")
+        {
+            health = otherObj.gameObject.GetComponent<EnemyHealth>();         
+            health.takeDamage((int)Mathf.Ceil(damage));
             impact = true;
             Destroy(gameObject);
 

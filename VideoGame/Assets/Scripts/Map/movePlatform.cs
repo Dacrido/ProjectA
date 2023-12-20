@@ -22,10 +22,12 @@ public class movePlatform : MonoBehaviour
     void Update()
     {
         checkDirection();
-        if (horizontal_mode) rb.velocity = new Vector2(speed* direction, rb.velocity.y);
+        float moveAmount = speed * direction ;
 
-        if (!horizontal_mode) rb.velocity = new Vector2(rb.velocity.x, speed*direction);
-
+        if (horizontal_mode)
+            rb.velocity = new Vector2(moveAmount, rb.velocity.y);
+        else
+            rb.velocity = new Vector2(rb.velocity.x, moveAmount);
     }
 
     void checkDirection()
@@ -53,5 +55,17 @@ public class movePlatform : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.transform.SetParent(this.transform, true);
+        }
+    }
 
+    void OnCollisionExit2D(Collision2D collision){
+        if (collision.gameObject.tag == "Player"){
+            collision.gameObject.transform.SetParent(null);
+        }
+    }
 }

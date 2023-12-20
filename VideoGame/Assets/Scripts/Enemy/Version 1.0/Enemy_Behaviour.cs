@@ -7,7 +7,7 @@ using System.Threading;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.Progress;
+
 using static UnityEngine.EventSystems.EventTrigger;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
